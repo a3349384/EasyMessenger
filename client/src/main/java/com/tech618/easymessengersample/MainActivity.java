@@ -42,6 +42,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 byteTest();
                 break;
             }
+            case R.id.viewLongTest:
+            {
+                longTest();
+                break;
+            }
+            case R.id.viewFloatTest:
+            {
+                floatTest();
+                break;
+            }
         }
     }
 
@@ -104,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 try
                 {
-                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClientImpl.asInterface(service).intTest(1, 2)));
+                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClientImpl.asInterface(service).longTest(1, 2)));
                 }
                 catch (Exception e)
                 {
@@ -129,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 try
                 {
-                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClientImpl.asInterface(service).intTest(1, 2)));
+                    log(String.format("%f + %f = %f", 1f, 2f, ITestFunctionClientImpl.asInterface(service).floatTest(1f, 2f)));
                 }
                 catch (Exception e)
                 {

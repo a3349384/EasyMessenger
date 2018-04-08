@@ -13,6 +13,6 @@ public class ServerService extends Service
     @Override
     public IBinder onBind(Intent intent)
     {
-        return new CalculatorBinder();
+        return new CalculatorServerImplServerImpl(new CalculatorServerImpl());
     }
 }

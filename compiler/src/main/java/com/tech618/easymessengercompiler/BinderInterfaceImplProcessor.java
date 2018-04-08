@@ -1,6 +1,7 @@
 package com.tech618.easymessengercompiler;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -27,6 +28,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
@@ -101,15 +103,21 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
         ParameterSpec parameterSpecInterfaceImpl = ParameterSpec.builder(TypeName.get(typeElement.asType()), "interfaceImpl").build();
 
         MethodSpec methodSpecConstructor = MethodSpec.constructorBuilder()
-                                                   .addModifiers(Modifier.PRIVATE)
+                                                   .addModifiers(Modifier.PUBLIC)
                                                    .addParameter(parameterSpecInterfaceImpl)
                                                    .addStatement("$N = $N", fieldSpecInterfaceImpl, parameterSpecInterfaceImpl)
                                                    .build();
 
+        TypeSpec.Builder typeImplBuilder = TypeSpec.classBuilder(generatedClassName)
+                                                   .addModifiers(Modifier.PUBLIC)
+                                                   .superclass(ClassName.get("android.os", "Binder"))
+                                                   .addField(fieldSpecInterfaceImpl)
+                                                   .addMethod(methodSpecConstructor);
 
         ParameterSpec onTransactMethodCodeParameter = ParameterSpec.builder(int.class, "code").build();
         ParameterSpec onTransactMethodDataParameter = ParameterSpec.builder(TypeNameHelper.typeNameOfParcel(), "data").build();
         ParameterSpec onTransactMethodReplyParameter = ParameterSpec.builder(TypeNameHelper.typeNameOfParcel(), "reply").build();
+        ParameterSpec onTransactMethodFlagsParameter = ParameterSpec.builder(int.class, "flags").build();
         MethodSpec.Builder onTransactMethodBuilder = MethodSpec.methodBuilder("onTransact")
                                                              .addModifiers(Modifier.PUBLIC)
                                                              .returns(boolean.class)
@@ -118,96 +126,39 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
                                                              .addParameter(onTransactMethodCodeParameter)
                                                              .addParameter(onTransactMethodDataParameter)
                                                              .addParameter(onTransactMethodReplyParameter)
-                                                             .addParameter(ParameterSpec.builder(int.class, "flags").build())
-                .beginControlFlow("switch($N)", onTransactMethodCodeParameter)
-                .endControlFlow();
-
+                                                             .addParameter(onTransactMethodFlagsParameter)
+                .beginControlFlow("switch($N)", onTransactMethodCodeParameter);
         for (int i = 0; i < methodElements.size(); i++)
         {
-//            ExecutableElement methodElement = methodElements.get(i);
-//            String methodName = methodElement.getSimpleName().toString();
-//            FieldSpec fieldSpecMethodId = FieldSpec.builder(TypeName.INT, "TRANSACTION_" + methodName, Modifier.PRIVATE, Modifier.STATIC)
-//                                                  .initializer("$T.FIRST_CALL_TRANSACTION + $L", TypeNameHelper.typeNameOfIBinder(), i + 1)
-//                                                  .build();
-//            typeImplBuilder.addField(fieldSpecMethodId);
-//            MethodSpec.Builder interfaceMethodBuilder = MethodSpec.methodBuilder(methodName)
-//                                                                .addModifiers(Modifier.PUBLIC)
-//                                                                .addAnnotation(Override.class)
-//                                                                .returns(TypeName.get(methodElement.getReturnType()))
-//                                                                .addException(TypeNameHelper.typeNameOfRemoteException());
-//
-//            for (VariableElement parameterElement : methodElement.getParameters())
-//            {
-//                interfaceMethodBuilder.addParameter(TypeName.get(parameterElement.asType()), parameterElement.getSimpleName().toString());
-//            }
-//            interfaceMethodBuilder.addStatement("$1T data = $1T.obtain()", TypeNameHelper.typeNameOfParcel());
-//            interfaceMethodBuilder.addStatement("$1T reply = $1T.obtain()", TypeNameHelper.typeNameOfParcel());
-//            interfaceMethodBuilder.beginControlFlow("try");
-//            for (VariableElement parameterElement : methodElement.getParameters())
-//            {
-//                mMessager.printMessage(Diagnostic.Kind.NOTE, "parameter type:" + parameterElement.asType().getKind());
-//                switch (parameterElement.asType().getKind())
-//                {
-//                    case INT:
-//                    {
-//                        interfaceMethodBuilder.addStatement("data.writeInt($L)", parameterElement.getSimpleName().toString());
-//                        break;
-//                    }
-//                    case BYTE:
-//                    {
-//                        interfaceMethodBuilder.addStatement("data.writeByte($L)", parameterElement.getSimpleName().toString());
-//                        break;
-//                    }
-//                    case LONG:
-//                    {
-//                        interfaceMethodBuilder.addStatement("data.writeLong($L)", parameterElement.getSimpleName().toString());
-//                        break;
-//                    }
-//                    case FLOAT:
-//                    {
-//                        interfaceMethodBuilder.addStatement("data.writeFloat($L)", parameterElement.getSimpleName().toString());
-//                        break;
-//                    }
-//                }
-//            }
-//            interfaceMethodBuilder.addStatement("$N.transact($N, data, reply, 0)", fieldSpecRemote, fieldSpecMethodId);
-//            interfaceMethodBuilder.addStatement("reply.readException()");
-//            switch (methodElement.getReturnType().getKind())
-//            {
-//                case INT:
-//                {
-//                    interfaceMethodBuilder.addStatement("return reply.readInt()");
-//                    break;
-//                }
-//                case BYTE:
-//                {
-//                    interfaceMethodBuilder.addStatement("return reply.readByte()");
-//                    break;
-//                }
-//                case LONG:
-//                {
-//                    interfaceMethodBuilder.addStatement("return reply.readLong()");
-//                    break;
-//                }
-//                case FLOAT:
-//                {
-//                    interfaceMethodBuilder.addStatement("return reply.readFloat()");
-//                    break;
-//                }
-//            }
-//            interfaceMethodBuilder.endControlFlow();
-//            interfaceMethodBuilder.beginControlFlow("finally");
-//            interfaceMethodBuilder.addStatement("data.recycle()");
-//            interfaceMethodBuilder.addStatement("reply.recycle()");
-//            interfaceMethodBuilder.endControlFlow();
-//            typeImplBuilder.addMethod(interfaceMethodBuilder.build());
-        }
+            ExecutableElement methodElement = methodElements.get(i);
+            String methodName = methodElement.getSimpleName().toString();
+            FieldSpec fieldSpecMethodId = FieldSpec.builder(TypeName.INT, "TRANSACTION_" + methodName, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+                                                  .initializer("$T.FIRST_CALL_TRANSACTION + $L", TypeNameHelper.typeNameOfIBinder(), i + 1)
+                                                  .build();
+            typeImplBuilder.addField(fieldSpecMethodId);
 
-        TypeSpec.Builder typeImplBuilder = TypeSpec.classBuilder(generatedClassName)
-                                                   .addModifiers(Modifier.PUBLIC)
-                                                   .superclass(ClassName.get("android.os", "Binder"))
-                                                   .addField(fieldSpecInterfaceImpl)
-                                                   .addMethod(methodSpecConstructor);
+            onTransactMethodBuilder.beginControlFlow("case $N:", fieldSpecMethodId);
+            List<String> parameterNames = new ArrayList<>(methodElement.getParameters().size());
+            for (VariableElement parameterElement : methodElement.getParameters())
+            {
+                String parameterName = parameterElement.getSimpleName().toString();
+                onTransactMethodBuilder.addStatement(generateParcelRead(onTransactMethodDataParameter.name, parameterName, methodElement.getReturnType().getKind()));
+                parameterNames.add(parameterName);
+            }
+
+            //add statement like: int _arg0 = data.readInt();
+            onTransactMethodBuilder.addStatement("$L result = $N.$N($L)", getJavaTypeStringByTypeKind(methodElement.getReturnType().getKind()),
+                    fieldSpecInterfaceImpl, methodElement.getSimpleName(), getMethodParameterStringByParameterNames(parameterNames));
+
+            onTransactMethodBuilder.addStatement("$N.writeNoException()", onTransactMethodReplyParameter);
+            onTransactMethodBuilder.addStatement("$N.$L(result)", onTransactMethodReplyParameter, getParcelWriteString(methodElement.getReturnType().getKind()));
+            onTransactMethodBuilder.addStatement("return true");
+            onTransactMethodBuilder.endControlFlow();
+        }
+        onTransactMethodBuilder.endControlFlow();
+        onTransactMethodBuilder.addStatement("return super.onTransact($N, $N, $N, $N)", onTransactMethodCodeParameter,
+                onTransactMethodDataParameter, onTransactMethodReplyParameter, onTransactMethodFlagsParameter);
+        typeImplBuilder.addMethod(onTransactMethodBuilder.build());
         return typeImplBuilder.build();
     }
 
@@ -223,6 +174,100 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
     public SourceVersion getSupportedSourceVersion()
     {
         return SourceVersion.latestSupported();
+    }
+
+    private CodeBlock generateParcelRead(String parcelName, String parameterName, TypeKind parameterType)
+    {
+        // generate like: int _arg0 = data.readInt();
+        CodeBlock.Builder codeBlockBuilder = CodeBlock.builder();
+        switch (parameterType)
+        {
+            case INT:
+            {
+                codeBlockBuilder.add("int $L = $L.readInt()", parameterName, parcelName);
+                break;
+            }
+            case BYTE:
+            {
+                codeBlockBuilder.add("byte $L = $L.readByte()", parameterName, parcelName);
+                break;
+            }
+            case LONG:
+            {
+                codeBlockBuilder.add("long $L = $L.readLong()", parameterName, parcelName);
+                break;
+            }
+            case FLOAT:
+            {
+                codeBlockBuilder.add("float $L = $L.readFloat()", parameterName, parcelName);
+                break;
+            }
+        }
+        return codeBlockBuilder.build();
+    }
+
+    private String getParcelWriteString(TypeKind parameterType)
+    {
+        switch (parameterType)
+        {
+            case INT:
+            {
+                return "writeInt";
+            }
+            case BYTE:
+            {
+                return "writeByte";
+            }
+            case LONG:
+            {
+                return "writeLong";
+            }
+            case FLOAT:
+            {
+                return "writeFloat";
+            }
+        }
+        return "null";
+    }
+
+    private String getJavaTypeStringByTypeKind(TypeKind typeKind)
+    {
+        switch (typeKind)
+        {
+            case INT:
+            {
+                return "int";
+            }
+            case BYTE:
+            {
+                return "byte";
+            }
+            case LONG:
+            {
+                return "long";
+            }
+            case FLOAT:
+            {
+                return "float";
+            }
+        }
+        return "null";
+    }
+
+    private String getMethodParameterStringByParameterNames(List<String> parameterNames)
+    {
+        if (parameterNames.size() == 0)
+        {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < parameterNames.size() - 1; i++)
+        {
+            builder.append(parameterNames.get(i));
+            builder.append(", ");
+        }
+        builder.append(parameterNames.get(parameterNames.size() - 1));
+        return builder.toString();
     }
 
     private void log(String log)
