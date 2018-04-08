@@ -68,9 +68,12 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
                 {
                     if (elementMember.getKind() == ElementKind.METHOD)
                     {
-                        mMessager.printMessage(Diagnostic.Kind.NOTE, "Start processing: " + elementClassString + "#" + elementMember.toString());
-                        //it's type is method, so it must be a ExecutableElement
-                        methodElements.add((ExecutableElement) elementMember);
+                        if (elementMember.getModifiers().size() == 1 && elementMember.getModifiers().contains(Modifier.PUBLIC))
+                        {
+                            mMessager.printMessage(Diagnostic.Kind.NOTE, "Start processing: " + elementClassString + "#" + elementMember.toString());
+                            //it's type is method, so it must be a ExecutableElement
+                            methodElements.add((ExecutableElement) elementMember);
+                        }
                     }
                 }
                 TypeSpec typeSpecImpl = generateCode(typeElement, methodElements);

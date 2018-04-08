@@ -42,5 +42,10 @@ public class CalculatorServerImpl
     {
         return s1 + s2;
     }
+
+    private void privateTest()
+    {
+
+    }
 }
 

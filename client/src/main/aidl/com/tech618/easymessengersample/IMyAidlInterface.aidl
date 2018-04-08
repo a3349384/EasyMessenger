@@ -2,6 +2,7 @@
 package com.tech618.easymessengersample;
 
 // Declare any non-default types here with import statements
+import com.tech618.easymessengersample.User;
 
 interface IMyAidlInterface {
     /**
@@ -16,4 +17,6 @@ interface IMyAidlInterface {
     int test(char c);
 
     boolean boolTest(boolean b);
+
+    User parcelableTest(in User user);
 }
