@@ -27,6 +27,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
@@ -155,59 +156,15 @@ public class BinderInterfaceProcessor extends AbstractProcessor
             interfaceMethodBuilder.beginControlFlow("try");
             for (VariableElement parameterElement : methodElement.getParameters())
             {
-                mMessager.printMessage(Diagnostic.Kind.NOTE, "parameter type:" + parameterElement.asType().getKind());
-                switch (parameterElement.asType().getKind())
-                {
-                    case INT:
-                    {
-                        interfaceMethodBuilder.addStatement("data.writeInt($L)", parameterElement.getSimpleName().toString());
-                        break;
-                    }
-                    case BYTE:
-                    {
-                        interfaceMethodBuilder.addStatement("data.writeByte($L)", parameterElement.getSimpleName().toString());
-                        break;
-                    }
-                    case LONG:
-                    {
-                        interfaceMethodBuilder.addStatement("data.writeLong($L)", parameterElement.getSimpleName().toString());
-                        break;
-                    }
-                    case FLOAT:
-                    {
-                        interfaceMethodBuilder.addStatement("data.writeFloat($L)", parameterElement.getSimpleName().toString());
-                        break;
-                    }
-                }
+                mMessager.printMessage(Diagnostic.Kind.NOTE, "parameter type:" + parameterElement.asType().toString());
+                interfaceMethodBuilder.addStatement("data.$L($N)", TypeMirrorHelper.getParcelWriteString(parameterElement.asType()),
+                        parameterElement.getSimpleName());
             }
             interfaceMethodBuilder.addStatement("$N.transact($N, data, reply, 0)", fieldSpecRemote, fieldSpecMethodId);
             interfaceMethodBuilder.addStatement("reply.readException()");
-            switch (methodElement.getReturnType().getKind())
+            if (methodElement.getReturnType().getKind() != TypeKind.VOID)
             {
-                case VOID:
-                {
-                    break;
-                }
-                case INT:
-                {
-                    interfaceMethodBuilder.addStatement("return reply.readInt()");
-                    break;
-                }
-                case BYTE:
-                {
-                    interfaceMethodBuilder.addStatement("return reply.readByte()");
-                    break;
-                }
-                case LONG:
-                {
-                    interfaceMethodBuilder.addStatement("return reply.readLong()");
-                    break;
-                }
-                case FLOAT:
-                {
-                    interfaceMethodBuilder.addStatement("return reply.readFloat()");
-                    break;
-                }
+                interfaceMethodBuilder.addStatement("return reply.$L()", TypeMirrorHelper.getParcelReadString(methodElement.getReturnType()));
             }
             interfaceMethodBuilder.endControlFlow();
             interfaceMethodBuilder.beginControlFlow("finally");
@@ -219,6 +176,4 @@ public class BinderInterfaceProcessor extends AbstractProcessor
 
         return typeImplBuilder.build();
     }
-
-
 }

@@ -1,7 +1,6 @@
 package com.tech618.easymessengercompiler;
 
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -143,7 +142,8 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
             {
                 String parameterName = parameterElement.getSimpleName().toString();
                 //add statement like: int _arg0 = data.readInt();
-                onTransactMethodBuilder.addStatement(generateParcelRead(onTransactMethodDataParameter.name, parameterName, methodElement.getReturnType().getKind()));
+                onTransactMethodBuilder.addStatement("$L $N = $N.$L()", TypeMirrorHelper.getJavaTypeStringByTypeKind(parameterElement.asType()),
+                        parameterElement.getSimpleName(), onTransactMethodDataParameter, TypeMirrorHelper.getParcelReadString(parameterElement.asType()));
                 parameterNames.add(parameterName);
             }
             // add statement like: int result = mInterfaceImpl.intTest(num1, num2);
@@ -154,7 +154,7 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
             }
             else
             {
-                onTransactMethodBuilder.addStatement("$L result = $N.$N($L)", getJavaTypeStringByTypeKind(methodElement.getReturnType().getKind()),
+                onTransactMethodBuilder.addStatement("$L result = $N.$N($L)", TypeMirrorHelper.getJavaTypeStringByTypeKind(methodElement.getReturnType()),
                         fieldSpecInterfaceImpl, methodElement.getSimpleName(), getMethodParameterStringByParameterNames(parameterNames));
             }
 
@@ -162,7 +162,7 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
             onTransactMethodBuilder.addStatement("$N.writeNoException()", onTransactMethodReplyParameter);
             if (methodElement.getReturnType().getKind() != TypeKind.VOID)
             {
-                onTransactMethodBuilder.addStatement("$N.$L(result)", onTransactMethodReplyParameter, getParcelWriteString(methodElement.getReturnType().getKind()));
+                onTransactMethodBuilder.addStatement("$N.$L(result)", onTransactMethodReplyParameter, TypeMirrorHelper.getParcelWriteString(methodElement.getReturnType()));
             }
             onTransactMethodBuilder.addStatement("return true");
             onTransactMethodBuilder.endControlFlow();
@@ -186,84 +186,6 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
     public SourceVersion getSupportedSourceVersion()
     {
         return SourceVersion.latestSupported();
-    }
-
-    private CodeBlock generateParcelRead(String parcelName, String parameterName, TypeKind parameterType)
-    {
-        // generate like: int _arg0 = data.readInt();
-        CodeBlock.Builder codeBlockBuilder = CodeBlock.builder();
-        switch (parameterType)
-        {
-            case INT:
-            {
-                codeBlockBuilder.add("int $L = $L.readInt()", parameterName, parcelName);
-                break;
-            }
-            case BYTE:
-            {
-                codeBlockBuilder.add("byte $L = $L.readByte()", parameterName, parcelName);
-                break;
-            }
-            case LONG:
-            {
-                codeBlockBuilder.add("long $L = $L.readLong()", parameterName, parcelName);
-                break;
-            }
-            case FLOAT:
-            {
-                codeBlockBuilder.add("float $L = $L.readFloat()", parameterName, parcelName);
-                break;
-            }
-        }
-        return codeBlockBuilder.build();
-    }
-
-    private String getParcelWriteString(TypeKind parameterType)
-    {
-        switch (parameterType)
-        {
-            case INT:
-            {
-                return "writeInt";
-            }
-            case BYTE:
-            {
-                return "writeByte";
-            }
-            case LONG:
-            {
-                return "writeLong";
-            }
-            case FLOAT:
-            {
-                return "writeFloat";
-            }
-        }
-        return "null";
-    }
-
-    private String getJavaTypeStringByTypeKind(TypeKind typeKind)
-    {
-        switch (typeKind)
-        {
-            case INT:
-            {
-                return "int";
-            }
-            case BYTE:
-            {
-                return "byte";
-            }
-            case LONG:
-            {
-                return "long";
-            }
-            case FLOAT:
-            {
-                return "float";
-            }
-        }
-        return "null";
     }
 
     private String getMethodParameterStringByParameterNames(List<String> parameterNames)

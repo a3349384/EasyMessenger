@@ -1,5 +1,6 @@
 package com.tech618.easymessengerserver;
 
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.tech618.easymessenger.BinderInterfaceImpl;
@@ -35,6 +36,11 @@ public class CalculatorServerImpl
     public float floatTest(float f1, float f2)
     {
         return f1 + f2;
+    }
+
+    public String stringTest(String s1, String s2)
+    {
+        return s1 + s2;
     }
 }
 

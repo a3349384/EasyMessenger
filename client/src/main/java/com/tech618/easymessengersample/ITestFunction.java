@@ -19,5 +19,7 @@ public interface ITestFunction
     long longTest(long l1, long l2) throws RemoteException;
 
     float floatTest(float f1, float f2) throws RemoteException;
+
+    String stringTest(String s1, String s2) throws RemoteException;
 }
 
