@@ -4,6 +4,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.tech618.easymessenger.BinderInterfaceImpl;
+import com.tech618.easymessengerclientservercommon.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,11 @@ public class CalculatorServerImpl
     }
 
     public List<Integer> primitiveListTest(List<Integer> list)
+    {
+        return new ArrayList<>(list);
+    }
+
+    public List<User> typeListTest(List<User> list)
     {
         return new ArrayList<>(list);
     }

@@ -24,4 +24,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     annotationProcessor project(':compiler')
     implementation project(':library')
+    implementation project(':client-server-common')
 }

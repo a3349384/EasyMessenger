@@ -1,4 +1,4 @@
-package com.tech618.easymessengerserver;
+package com.tech618.easymessengerclientservercommon;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -42,6 +42,12 @@ public class User implements Parcelable
     {
         dest.writeString(this.name);
         dest.writeInt(this.age);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "name=" + name + ";age=" + age;
     }
 
     public User()

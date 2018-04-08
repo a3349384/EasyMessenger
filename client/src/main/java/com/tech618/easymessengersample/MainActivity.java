@@ -5,11 +5,12 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.view.PagerTitleStrip;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import com.tech618.easymessengerclientservercommon.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewFloatTest).setOnClickListener(this);
         findViewById(R.id.viewStringTest).setOnClickListener(this);
         findViewById(R.id.viewParcelableTest).setOnClickListener(this);
-        findViewById(R.id.viewListTest).setOnClickListener(this);
+        findViewById(R.id.viewPrimitiveListTest).setOnClickListener(this);
+        findViewById(R.id.viewTypeListTest).setOnClickListener(this);
     }
 
     @Override
@@ -74,9 +76,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 parcelableTest();
                 break;
             }
-            case R.id.viewListTest:
+            case R.id.viewPrimitiveListTest:
             {
-                listTest();
+                primitiveListTest();
+                break;
+            }
+            case R.id.viewTypeListTest:
+            {
+                typeListTest();
                 break;
             }
         }
@@ -263,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }, BIND_AUTO_CREATE);
     }
 
-    private void listTest()
+    private void primitiveListTest()
     {
         bindService(new Intent(getServiceIntent()), new ServiceConnection()
         {
@@ -276,6 +283,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     list.add(1);
                     list.add(2);
                     List<Integer> list1 = ITestFunctionClientImpl.asInterface(service).primitiveListTest(list);
+                    log(String.format("%s", list1.toString()));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name)
+            {
+
+            }
+        }, BIND_AUTO_CREATE);
+    }
+
+    private void typeListTest()
+    {
+        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service)
+            {
+                try
+                {
+                    List<User> list = new ArrayList<>();
+                    User user1 = new User();
+                    user1.setName("Alice");
+                    user1.setAge(12);
+                    list.add(user1);
+
+                    List<User> list1 = ITestFunctionClientImpl.asInterface(service).typeListTest(list);
                     log(String.format("%s", list1.toString()));
                 }
                 catch (Exception e)
