@@ -157,14 +157,29 @@ public class BinderInterfaceProcessor extends AbstractProcessor
             for (VariableElement parameterElement : methodElement.getParameters())
             {
                 mMessager.printMessage(Diagnostic.Kind.NOTE, "parameter type:" + parameterElement.asType().toString());
-                interfaceMethodBuilder.addStatement("data.$L($N)", TypeMirrorHelper.getParcelWriteString(parameterElement.asType()),
-                        parameterElement.getSimpleName());
+                if (ClassHelper.isThirdPartyClass(parameterElement.asType().toString()))
+                {
+                    //the parameter should be a thirdparty class, we regard it as a parceable
+                    interfaceMethodBuilder.addStatement("$N.writeToParcel(data, 0)", parameterElement.getSimpleName());
+                }
+                else
+                {
+                    interfaceMethodBuilder.addStatement("data.$L($N)", TypeMirrorHelper.getParcelWriteString(parameterElement.asType()),
+                            parameterElement.getSimpleName());
+                }
             }
             interfaceMethodBuilder.addStatement("$N.transact($N, data, reply, 0)", fieldSpecRemote, fieldSpecMethodId);
             interfaceMethodBuilder.addStatement("reply.readException()");
             if (methodElement.getReturnType().getKind() != TypeKind.VOID)
             {
-                interfaceMethodBuilder.addStatement("return reply.$L()", TypeMirrorHelper.getParcelReadString(methodElement.getReturnType()));
+                if (ClassHelper.isThirdPartyClass(methodElement.getReturnType().toString()))
+                {
+                    interfaceMethodBuilder.addStatement("return $T.CREATOR.createFromParcel(reply)", methodElement.getReturnType());
+                }
+                else
+                {
+                    interfaceMethodBuilder.addStatement("return reply.$L()", TypeMirrorHelper.getParcelReadString(methodElement.getReturnType()));
+                }
             }
             interfaceMethodBuilder.endControlFlow();
             interfaceMethodBuilder.beginControlFlow("finally");

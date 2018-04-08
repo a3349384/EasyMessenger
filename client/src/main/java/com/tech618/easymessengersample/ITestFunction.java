@@ -1,5 +1,6 @@
 package com.tech618.easymessengersample;
 
+import android.os.Parcelable;
 import android.os.RemoteException;
 
 import com.tech618.easymessenger.BinderInterface;
@@ -21,5 +22,7 @@ public interface ITestFunction
     float floatTest(float f1, float f2) throws RemoteException;
 
     String stringTest(String s1, String s2) throws RemoteException;
+
+    User parcelableTest(User user) throws RemoteException;
 }
 

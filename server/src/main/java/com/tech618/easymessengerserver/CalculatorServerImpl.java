@@ -43,6 +43,15 @@ public class CalculatorServerImpl
         return s1 + s2;
     }
 
+    public User parcelableTest(User user)
+    {
+        User user1 = new User();
+        user1.setName(user.getName());
+        user1.setAge(user.getAge());
+
+        return user1;
+    }
+
     private void privateTest()
     {
 

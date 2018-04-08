@@ -144,12 +144,21 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
             for (VariableElement parameterElement : methodElement.getParameters())
             {
                 String parameterName = parameterElement.getSimpleName().toString();
-                //add statement like: int _arg0 = data.readInt();
-                onTransactMethodBuilder.addStatement("$L $N = $N.$L()", TypeMirrorHelper.getJavaTypeStringByTypeKind(parameterElement.asType()),
-                        parameterElement.getSimpleName(), onTransactMethodDataParameter, TypeMirrorHelper.getParcelReadString(parameterElement.asType()));
+                if (ClassHelper.isThirdPartyClass(parameterElement.asType().toString()))
+                {
+                    //xx args = xx.CREATOR.createFromParcel(data);
+                    onTransactMethodBuilder.addStatement("$1T $2N = $1T.CREATOR.createFromParcel($3N)", parameterElement.asType(),
+                            parameterElement.getSimpleName(), onTransactMethodDataParameter);
+                }
+                else
+                {
+                    //add statement like: int arg0 = data.readInt();
+                    onTransactMethodBuilder.addStatement("$L $N = $N.$L()", TypeMirrorHelper.getJavaTypeStringByTypeKind(parameterElement.asType()),
+                            parameterElement.getSimpleName(), onTransactMethodDataParameter, TypeMirrorHelper.getParcelReadString(parameterElement.asType()));
+                }
                 parameterNames.add(parameterName);
             }
-            // add statement like: int result = mInterfaceImpl.intTest(num1, num2);
+
             if (methodElement.getReturnType().getKind() == TypeKind.VOID)
             {
                 onTransactMethodBuilder.addStatement("$N.$N($L)", fieldSpecInterfaceImpl, methodElement.getSimpleName(),
@@ -157,15 +166,24 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
             }
             else
             {
-                onTransactMethodBuilder.addStatement("$L result = $N.$N($L)", TypeMirrorHelper.getJavaTypeStringByTypeKind(methodElement.getReturnType()),
+                // add statement like: int result = mInterfaceImpl.intTest(num1, num2);
+                onTransactMethodBuilder.addStatement("$T result = $N.$N($L)", methodElement.getReturnType(),
                         fieldSpecInterfaceImpl, methodElement.getSimpleName(), getMethodParameterStringByParameterNames(parameterNames));
             }
-
 
             onTransactMethodBuilder.addStatement("$N.writeNoException()", onTransactMethodReplyParameter);
             if (methodElement.getReturnType().getKind() != TypeKind.VOID)
             {
-                onTransactMethodBuilder.addStatement("$N.$L(result)", onTransactMethodReplyParameter, TypeMirrorHelper.getParcelWriteString(methodElement.getReturnType()));
+                if (ClassHelper.isThirdPartyClass(methodElement.getReturnType().toString()))
+                {
+                    //add statement like: result.writeToParcel(reply, android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE)
+                    onTransactMethodBuilder.addStatement("result.writeToParcel(reply, $T.PARCELABLE_WRITE_RETURN_VALUE)", TypeNameHelper.typeNameOfParcelable());
+                }
+                else
+                {
+                    //add statement like: reply.writeString(result)
+                    onTransactMethodBuilder.addStatement("$N.$L(result)", onTransactMethodReplyParameter, TypeMirrorHelper.getParcelWriteString(methodElement.getReturnType()));
+                }
             }
             onTransactMethodBuilder.addStatement("return true");
             onTransactMethodBuilder.endControlFlow();

@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewLongTest).setOnClickListener(this);
         findViewById(R.id.viewFloatTest).setOnClickListener(this);
         findViewById(R.id.viewStringTest).setOnClickListener(this);
+        findViewById(R.id.viewParcelableTest).setOnClickListener(this);
     }
 
     @Override
@@ -62,6 +63,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.viewStringTest:
             {
                 stringTest();
+                break;
+            }
+            case R.id.viewParcelableTest:
+            {
+                parcelableTest();
                 break;
             }
         }
@@ -203,6 +209,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try
                 {
                     log(String.format("%s + %s = %s", "hello", "world", ITestFunctionClientImpl.asInterface(service).stringTest("hello", "world")));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name)
+            {
+
+            }
+        }, BIND_AUTO_CREATE);
+    }
+
+    private void parcelableTest()
+    {
+        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service)
+            {
+                try
+                {
+                    User user = new User();
+                    user.setName("Bob");
+                    user.setAge(11);
+
+                    User user1 = ITestFunctionClientImpl.asInterface(service).parcelableTest(user);
+                    log(String.format("name = %s;age = %d", user1.getName(), user1.getAge()));
                 }
                 catch (Exception e)
                 {

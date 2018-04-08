@@ -19,6 +19,11 @@ public class TypeNameHelper
         return ClassName.get("android.os", "Parcel");
     }
 
+    public static TypeName typeNameOfParcelable()
+    {
+        return ClassName.get("android.os", "Parcelable");
+    }
+
     public static TypeName typeNameOfRemoteException()
     {
         return ClassName.get("android.os", "RemoteException");
