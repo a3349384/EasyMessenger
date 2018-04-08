@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        findViewById(R.id.viewVoidTest).setOnClickListener(this);
         findViewById(R.id.viewIntTest).setOnClickListener(this);
         findViewById(R.id.viewByteTest).setOnClickListener(this);
         findViewById(R.id.viewLongTest).setOnClickListener(this);
@@ -32,6 +33,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         switch (v.getId())
         {
+            case R.id.viewVoidTest:
+            {
+                voidTest();
+                break;
+            }
             case R.id.viewIntTest:
             {
                 intTest();
@@ -53,6 +59,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
         }
+    }
+
+    private void voidTest()
+    {
+        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service)
+            {
+                try
+                {
+                    ITestFunctionClientImpl.asInterface(service).voidTest();
+                    log("see log for detail!");
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name)
+            {
+
+            }
+        }, BIND_AUTO_CREATE);
     }
 
     private void intTest()

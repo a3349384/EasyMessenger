@@ -14,4 +14,6 @@ interface IMyAidlInterface {
     int add(int num1, int num2);
 
     int test(char c);
+
+    boolean boolTest(boolean b);
 }

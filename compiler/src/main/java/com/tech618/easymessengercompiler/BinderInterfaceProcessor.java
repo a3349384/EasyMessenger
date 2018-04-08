@@ -184,6 +184,10 @@ public class BinderInterfaceProcessor extends AbstractProcessor
             interfaceMethodBuilder.addStatement("reply.readException()");
             switch (methodElement.getReturnType().getKind())
             {
+                case VOID:
+                {
+                    break;
+                }
                 case INT:
                 {
                     interfaceMethodBuilder.addStatement("return reply.readInt()");

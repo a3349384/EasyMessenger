@@ -10,6 +10,8 @@ import com.tech618.easymessenger.BinderInterface;
 @BinderInterface
 public interface ITestFunction
 {
+    void voidTest() throws RemoteException;
+
     int intTest(int num1, int num2) throws RemoteException;
 
     byte byteTest(byte b1, byte b2) throws RemoteException;

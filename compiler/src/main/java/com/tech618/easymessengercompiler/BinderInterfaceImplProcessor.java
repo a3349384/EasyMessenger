@@ -142,16 +142,28 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
             for (VariableElement parameterElement : methodElement.getParameters())
             {
                 String parameterName = parameterElement.getSimpleName().toString();
+                //add statement like: int _arg0 = data.readInt();
                 onTransactMethodBuilder.addStatement(generateParcelRead(onTransactMethodDataParameter.name, parameterName, methodElement.getReturnType().getKind()));
                 parameterNames.add(parameterName);
             }
+            // add statement like: int result = mInterfaceImpl.intTest(num1, num2);
+            if (methodElement.getReturnType().getKind() == TypeKind.VOID)
+            {
+                onTransactMethodBuilder.addStatement("$N.$N($L)", fieldSpecInterfaceImpl, methodElement.getSimpleName(),
+                        getMethodParameterStringByParameterNames(parameterNames));
+            }
+            else
+            {
+                onTransactMethodBuilder.addStatement("$L result = $N.$N($L)", getJavaTypeStringByTypeKind(methodElement.getReturnType().getKind()),
+                        fieldSpecInterfaceImpl, methodElement.getSimpleName(), getMethodParameterStringByParameterNames(parameterNames));
+            }
 
-            //add statement like: int _arg0 = data.readInt();
-            onTransactMethodBuilder.addStatement("$L result = $N.$N($L)", getJavaTypeStringByTypeKind(methodElement.getReturnType().getKind()),
-                    fieldSpecInterfaceImpl, methodElement.getSimpleName(), getMethodParameterStringByParameterNames(parameterNames));
 
             onTransactMethodBuilder.addStatement("$N.writeNoException()", onTransactMethodReplyParameter);
-            onTransactMethodBuilder.addStatement("$N.$L(result)", onTransactMethodReplyParameter, getParcelWriteString(methodElement.getReturnType().getKind()));
+            if (methodElement.getReturnType().getKind() != TypeKind.VOID)
+            {
+                onTransactMethodBuilder.addStatement("$N.$L(result)", onTransactMethodReplyParameter, getParcelWriteString(methodElement.getReturnType().getKind()));
+            }
             onTransactMethodBuilder.addStatement("return true");
             onTransactMethodBuilder.endControlFlow();
         }

@@ -1,5 +1,7 @@
 package com.tech618.easymessengerserver;
 
+import android.util.Log;
+
 import com.tech618.easymessenger.BinderInterfaceImpl;
 
 /**
@@ -8,6 +10,13 @@ import com.tech618.easymessenger.BinderInterfaceImpl;
 @BinderInterfaceImpl
 public class CalculatorServerImpl
 {
+    public static final String TAG = "CalculatorServerImpl";
+
+    public void voidTest()
+    {
+        Log.d(TAG, "voidTest called!");
+    }
+
     public int intTest(int num1, int num2)
     {
         return num1 + num2;
