@@ -5,6 +5,8 @@ import android.os.RemoteException;
 
 import com.tech618.easymessenger.BinderInterface;
 
+import java.util.List;
+
 /**
  * Created by zmy on 2018/4/7.
  */
@@ -24,5 +26,7 @@ public interface ITestFunction
     String stringTest(String s1, String s2) throws RemoteException;
 
     User parcelableTest(User user) throws RemoteException;
+
+    List<Integer> primitiveListTest(List<Integer> list) throws RemoteException;
 }
 

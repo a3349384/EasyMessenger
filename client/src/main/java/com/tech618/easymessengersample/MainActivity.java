@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
     public static final String TAG = "MainActivity";
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewFloatTest).setOnClickListener(this);
         findViewById(R.id.viewStringTest).setOnClickListener(this);
         findViewById(R.id.viewParcelableTest).setOnClickListener(this);
+        findViewById(R.id.viewListTest).setOnClickListener(this);
     }
 
     @Override
@@ -68,6 +72,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.viewParcelableTest:
             {
                 parcelableTest();
+                break;
+            }
+            case R.id.viewListTest:
+            {
+                listTest();
                 break;
             }
         }
@@ -239,6 +248,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     User user1 = ITestFunctionClientImpl.asInterface(service).parcelableTest(user);
                     log(String.format("name = %s;age = %d", user1.getName(), user1.getAge()));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name)
+            {
+
+            }
+        }, BIND_AUTO_CREATE);
+    }
+
+    private void listTest()
+    {
+        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service)
+            {
+                try
+                {
+                    List<Integer> list = new ArrayList<>();
+                    list.add(1);
+                    list.add(2);
+                    List<Integer> list1 = ITestFunctionClientImpl.asInterface(service).primitiveListTest(list);
+                    log(String.format("%s", list1.toString()));
                 }
                 catch (Exception e)
                 {

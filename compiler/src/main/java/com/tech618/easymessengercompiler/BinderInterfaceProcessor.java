@@ -172,9 +172,16 @@ public class BinderInterfaceProcessor extends AbstractProcessor
             interfaceMethodBuilder.addStatement("reply.readException()");
             if (methodElement.getReturnType().getKind() != TypeKind.VOID)
             {
-                if (ClassHelper.isThirdPartyClass(methodElement.getReturnType().toString()))
+                String returnTypeClassName = methodElement.getReturnType().toString();
+                if (ClassHelper.isThirdPartyClass(returnTypeClassName))
                 {
                     interfaceMethodBuilder.addStatement("return $T.CREATOR.createFromParcel(reply)", methodElement.getReturnType());
+                }
+                else if (ClassHelper.isList(returnTypeClassName))
+                {
+                    interfaceMethodBuilder.addStatement("$T result = new $T()", List.class, ArrayList.class);
+                    interfaceMethodBuilder.addStatement("reply.readList(result, getClass().getClassLoader())");
+                    interfaceMethodBuilder.addStatement("return result");
                 }
                 else
                 {

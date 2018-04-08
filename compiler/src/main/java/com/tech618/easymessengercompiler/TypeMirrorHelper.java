@@ -1,5 +1,7 @@
 package com.tech618.easymessengercompiler;
 
+import java.util.List;
+
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
@@ -39,26 +41,30 @@ public class TypeMirrorHelper
 
     public static String getParcelWriteString(TypeMirror typeMirror)
     {
-        String classStrng = typeMirror.toString();
-        if (classStrng.contentEquals(int.class.getCanonicalName()))
+        String className = typeMirror.toString();
+        if (className.contentEquals(int.class.getCanonicalName()))
         {
             return "writeInt";
         }
-        else if (classStrng.contentEquals(byte.class.getCanonicalName()))
+        else if (className.contentEquals(byte.class.getCanonicalName()))
         {
             return "writeByte";
         }
-        else if (classStrng.contentEquals(long.class.getCanonicalName()))
+        else if (className.contentEquals(long.class.getCanonicalName()))
         {
             return "writeLong";
         }
-        else if (classStrng.contentEquals(float.class.getCanonicalName()))
+        else if (className.contentEquals(float.class.getCanonicalName()))
         {
             return "writeFloat";
         }
-        else if (classStrng.contentEquals(String.class.getCanonicalName()))
+        else if (className.contentEquals(String.class.getCanonicalName()))
         {
             return "writeString";
+        }
+        else if (ClassHelper.isList(className))
+        {
+            return "writeList";
         }
         else
         {

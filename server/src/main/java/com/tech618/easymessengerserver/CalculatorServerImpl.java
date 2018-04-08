@@ -5,6 +5,9 @@ import android.util.Log;
 
 import com.tech618.easymessenger.BinderInterfaceImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by zmy on 2018/4/6.
  */
@@ -50,6 +53,11 @@ public class CalculatorServerImpl
         user1.setAge(user.getAge());
 
         return user1;
+    }
+
+    public List<Integer> primitiveListTest(List<Integer> list)
+    {
+        return new ArrayList<>(list);
     }
 
     private void privateTest()

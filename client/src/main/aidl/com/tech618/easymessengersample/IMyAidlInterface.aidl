@@ -19,4 +19,6 @@ interface IMyAidlInterface {
     boolean boolTest(boolean b);
 
     User parcelableTest(in User user);
+
+//    List<int> listTest(in List<int> list);
 }

@@ -143,20 +143,26 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
             List<String> parameterNames = new ArrayList<>(methodElement.getParameters().size());
             for (VariableElement parameterElement : methodElement.getParameters())
             {
-                String parameterName = parameterElement.getSimpleName().toString();
-                if (ClassHelper.isThirdPartyClass(parameterElement.asType().toString()))
+                String parameterClassName = parameterElement.asType().toString();
+                if (ClassHelper.isThirdPartyClass(parameterClassName))
                 {
                     //xx args = xx.CREATOR.createFromParcel(data);
                     onTransactMethodBuilder.addStatement("$1T $2N = $1T.CREATOR.createFromParcel($3N)", parameterElement.asType(),
                             parameterElement.getSimpleName(), onTransactMethodDataParameter);
                 }
+                else if (ClassHelper.isList(parameterClassName))
+                {
+                    List<Integer> list = new ArrayList<>();
+                    onTransactMethodBuilder.addStatement("$T $N = new $T<>()", parameterElement.asType(), parameterElement.getSimpleName(), ArrayList.class);
+                    onTransactMethodBuilder.addStatement("$N.readList($N, getClass().getClassLoader())", onTransactMethodDataParameter, parameterElement.getSimpleName());
+                }
                 else
                 {
                     //add statement like: int arg0 = data.readInt();
-                    onTransactMethodBuilder.addStatement("$L $N = $N.$L()", TypeMirrorHelper.getJavaTypeStringByTypeKind(parameterElement.asType()),
+                    onTransactMethodBuilder.addStatement("$T $N = $N.$L()", parameterElement.asType(),
                             parameterElement.getSimpleName(), onTransactMethodDataParameter, TypeMirrorHelper.getParcelReadString(parameterElement.asType()));
                 }
-                parameterNames.add(parameterName);
+                parameterNames.add(parameterElement.getSimpleName().toString());
             }
 
             if (methodElement.getReturnType().getKind() == TypeKind.VOID)

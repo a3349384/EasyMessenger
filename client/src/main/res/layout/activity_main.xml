@@ -44,5 +44,10 @@
                 android:text="parcelable test"
                 android:textAllCaps="false"
                 android:id="@+id/viewParcelableTest"/>
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="list test"
+                android:textAllCaps="false"
+                android:id="@+id/viewListTest"/>
     </LinearLayout>
 </ScrollView>
