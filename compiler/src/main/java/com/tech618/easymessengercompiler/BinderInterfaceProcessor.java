@@ -10,6 +10,7 @@ import com.squareup.javapoet.TypeSpec;
 import com.tech618.easymessenger.BinderInterface;
 
 import java.io.IOException;
+import java.lang.management.MemoryManagerMXBean;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +30,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 /**
@@ -39,6 +41,7 @@ public class BinderInterfaceProcessor extends AbstractProcessor
 {
     private Filer mFiler;
     private Elements mElements;
+    private Types mTypes;
     private Messager mMessager;
 
     @Override
@@ -47,6 +50,7 @@ public class BinderInterfaceProcessor extends AbstractProcessor
         super.init(processingEnv);
         mFiler = processingEnv.getFiler();
         mElements = processingEnv.getElementUtils();
+        mTypes = processingEnv.getTypeUtils();
         mMessager = processingEnv.getMessager();
     }
 

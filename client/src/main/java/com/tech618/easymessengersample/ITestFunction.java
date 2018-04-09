@@ -4,6 +4,7 @@ import android.os.Parcelable;
 import android.os.RemoteException;
 
 import com.tech618.easymessenger.BinderInterface;
+import com.tech618.easymessengerclientservercommon.Color;
 import com.tech618.easymessengerclientservercommon.User;
 
 import java.util.List;
@@ -31,5 +32,7 @@ public interface ITestFunction
     List<Integer> primitiveListTest(List<Integer> list) throws RemoteException;
 
     List<User> typeListTest(List<User> list) throws RemoteException;
+
+    Color enumTest(Color color) throws RemoteException;
 }
 

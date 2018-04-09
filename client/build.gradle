@@ -26,3 +26,4 @@ dependencies {
     implementation project(':library')
     implementation project(':client-server-common')
 }
+

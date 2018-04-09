@@ -54,5 +54,10 @@
                 android:text="type list test"
                 android:textAllCaps="false"
                 android:id="@+id/viewTypeListTest"/>
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="enum test"
+                android:textAllCaps="false"
+                android:id="@+id/viewEnumTest"/>
     </LinearLayout>
 </ScrollView>

@@ -4,6 +4,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.tech618.easymessenger.BinderInterfaceImpl;
+import com.tech618.easymessengerclientservercommon.Color;
 import com.tech618.easymessengerclientservercommon.User;
 
 import java.util.ArrayList;
@@ -64,6 +65,11 @@ public class CalculatorServerImpl
     public List<User> typeListTest(List<User> list)
     {
         return new ArrayList<>(list);
+    }
+
+    public Color enumTest(Color color)
+    {
+        return Color.RED;
     }
 
     private void privateTest()
