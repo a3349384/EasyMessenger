@@ -1,10 +1,21 @@
 apply plugin: 'java-library'
+apply from: 'maven.gradle'
+
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
+repositories {
+    maven {
+        url 'http://192.168.1.155:8081/repository/gened.ipc.library/'
+        credentials {
+            username 'zmy'
+            password '111111'
+        }
+    }
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.squareup:javapoet:1.10.0'
-    implementation project(':library')
+    implementation 'com.tech618:gened-ipc-library:1.0.0'
 }

@@ -36,6 +36,11 @@
                 android:id="@+id/viewFloatTest"/>
         <Button android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="boolean test"
+                android:textAllCaps="false"
+                android:id="@+id/viewBooleanTest"/>
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="string test"
                 android:textAllCaps="false"
                 android:id="@+id/viewStringTest"/>

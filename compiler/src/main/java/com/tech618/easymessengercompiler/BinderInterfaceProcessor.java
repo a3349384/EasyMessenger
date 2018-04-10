@@ -168,8 +168,15 @@ public class BinderInterfaceProcessor extends AbstractProcessor
                 }
                 else
                 {
-                    interfaceMethodBuilder.addStatement("data.$L($N)", TypeMirrorHelper.getParcelWriteString(parameterElement.asType()),
-                            parameterElement.getSimpleName());
+                    if (parameterElement.asType().getKind() == TypeKind.BOOLEAN)
+                    {
+                        interfaceMethodBuilder.addStatement("data.writeInt($N ? 1 : 0)", parameterElement.getSimpleName());
+                    }
+                    else
+                    {
+                        interfaceMethodBuilder.addStatement("data.$L($N)", TypeMirrorHelper.getParcelWriteString(parameterElement.asType()),
+                                parameterElement.getSimpleName());
+                    }
                 }
             }
             interfaceMethodBuilder.addStatement("$N.transact($N, data, reply, 0)", fieldSpecRemote, fieldSpecMethodId);
@@ -186,6 +193,10 @@ public class BinderInterfaceProcessor extends AbstractProcessor
                     interfaceMethodBuilder.addStatement("$T result = new $T()", List.class, ArrayList.class);
                     interfaceMethodBuilder.addStatement("reply.readList(result, getClass().getClassLoader())");
                     interfaceMethodBuilder.addStatement("return result");
+                }
+                else if (methodElement.getReturnType().getKind() == TypeKind.BOOLEAN)
+                {
+                    interfaceMethodBuilder.addStatement("return reply.readInt() > 0 ? true : false", TypeMirrorHelper.getParcelReadString(methodElement.getReturnType()));
                 }
                 else
                 {

@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewByteTest).setOnClickListener(this);
         findViewById(R.id.viewLongTest).setOnClickListener(this);
         findViewById(R.id.viewFloatTest).setOnClickListener(this);
+        findViewById(R.id.viewBooleanTest).setOnClickListener(this);
         findViewById(R.id.viewStringTest).setOnClickListener(this);
         findViewById(R.id.viewParcelableTest).setOnClickListener(this);
         findViewById(R.id.viewPrimitiveListTest).setOnClickListener(this);
@@ -66,6 +67,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.viewFloatTest:
             {
                 floatTest();
+                break;
+            }
+            case R.id.viewBooleanTest:
+            {
+                booleanTest();
                 break;
             }
             case R.id.viewStringTest:
@@ -207,6 +213,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try
                 {
                     log(String.format("%f + %f = %f", 1f, 2f, ITestFunctionClientImpl.asInterface(service).floatTest(1f, 2f)));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name)
+            {
+
+            }
+        }, BIND_AUTO_CREATE);
+    }
+
+    private void booleanTest()
+    {
+        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service)
+            {
+                try
+                {
+                    log("" + ITestFunctionClientImpl.asInterface(service).booleanTest(false));
                 }
                 catch (Exception e)
                 {

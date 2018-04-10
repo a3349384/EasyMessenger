@@ -1,0 +1,29 @@
+apply plugin: 'maven'
+
+task javaSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives javaSourcesJar
+}
+
+uploadArchives {
+    configuration = configurations.archives
+    repositories {
+        mavenDeployer {
+            repository(url: "http://192.168.1.155:8081/repository/gened.ipc.compiler/") {
+                authentication(userName: "zmy", password: "111111")
+            }
+            pom.project {
+                name 'gened'
+                version '1.0.2'
+                artifactId 'gened-ipc-compiler'
+                groupId 'com.tech618'
+                packaging 'aar'
+                description 'ipc compiler'
+            }
+        }
+    }
+}

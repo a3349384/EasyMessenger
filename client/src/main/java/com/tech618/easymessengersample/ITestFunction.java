@@ -25,6 +25,8 @@ public interface ITestFunction
 
     float floatTest(float f1, float f2) throws RemoteException;
 
+    boolean booleanTest(boolean b) throws RemoteException;
+
     String stringTest(String s1, String s2) throws RemoteException;
 
     User parcelableTest(User user) throws RemoteException;

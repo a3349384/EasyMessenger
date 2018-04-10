@@ -43,6 +43,11 @@ public class CalculatorServerImpl
         return f1 + f2;
     }
 
+    public boolean booleanTest(boolean b)
+    {
+        return !b;
+    }
+
     public String stringTest(String s1, String s2)
     {
         return s1 + s2;

@@ -156,6 +156,11 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
                     onTransactMethodBuilder.addStatement("$T $N = new $T<>()", parameterElement.asType(), parameterElement.getSimpleName(), ArrayList.class);
                     onTransactMethodBuilder.addStatement("$N.readList($N, getClass().getClassLoader())", onTransactMethodDataParameter, parameterElement.getSimpleName());
                 }
+                else if (parameterElement.asType().getKind() == TypeKind.BOOLEAN)
+                {
+                    onTransactMethodBuilder.addStatement("$T $N = $N.readInt() > 0 ? true : false", parameterElement.asType(),
+                            parameterElement.getSimpleName(), onTransactMethodDataParameter);
+                }
                 else
                 {
                     //add statement like: int arg0 = data.readInt();
@@ -184,6 +189,10 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
                 {
                     //add statement like: result.writeToParcel(reply, android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE)
                     onTransactMethodBuilder.addStatement("result.writeToParcel(reply, $T.PARCELABLE_WRITE_RETURN_VALUE)", TypeNameHelper.typeNameOfParcelable());
+                }
+                else if (methodElement.getReturnType().getKind() == TypeKind.BOOLEAN)
+                {
+                    onTransactMethodBuilder.addStatement("$N.writeInt(result ? 1 : 0)", onTransactMethodReplyParameter);
                 }
                 else
                 {
