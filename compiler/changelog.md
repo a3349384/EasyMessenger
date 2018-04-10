@@ -6,3 +6,6 @@ compiler采用compileOnly方式依赖于library
 
 # 1.0.2
 compiler采用implementation方式依赖于library
+
+# 1.0.3
+新增boolean类型支持
