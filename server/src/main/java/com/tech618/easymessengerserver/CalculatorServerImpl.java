@@ -77,6 +77,21 @@ public class CalculatorServerImpl
         return Color.RED;
     }
 
+    public User nullTest(User user)
+    {
+        if (user == null)
+        {
+            return null;
+        }
+        else
+        {
+            User user1 = new User();
+            user1.setName(user.getName());
+            user1.setAge(user.getAge());
+            return user1;
+        }
+    }
+
     private void privateTest()
     {
 

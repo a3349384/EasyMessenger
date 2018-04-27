@@ -146,9 +146,13 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
                 String parameterClassName = parameterElement.asType().toString();
                 if (ClassHelper.isThirdPartyClass(parameterClassName))
                 {
-                    //xx args = xx.CREATOR.createFromParcel(data);
-                    onTransactMethodBuilder.addStatement("$1T $2N = $1T.CREATOR.createFromParcel($3N)", parameterElement.asType(),
-                            parameterElement.getSimpleName(), onTransactMethodDataParameter);
+                    //the parameter should be a thirdparty class, we regard it as a parceable
+                    onTransactMethodBuilder.addStatement("$1T $2N = null", parameterElement.asType(), parameterElement.getSimpleName());
+                    onTransactMethodBuilder.addStatement("int isNullFlag = $N.readInt()", onTransactMethodDataParameter);
+                    onTransactMethodBuilder.beginControlFlow("if (isNullFlag > 0)");
+                    onTransactMethodBuilder.addStatement("$N = $T.CREATOR.createFromParcel($N)", parameterElement.getSimpleName(),
+                            parameterElement.asType(), onTransactMethodDataParameter);
+                    onTransactMethodBuilder.endControlFlow();
                 }
                 else if (ClassHelper.isList(parameterClassName))
                 {
@@ -187,8 +191,11 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
             {
                 if (ClassHelper.isThirdPartyClass(methodElement.getReturnType().toString()))
                 {
-                    //add statement like: result.writeToParcel(reply, android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE)
-                    onTransactMethodBuilder.addStatement("result.writeToParcel(reply, $T.PARCELABLE_WRITE_RETURN_VALUE)", TypeNameHelper.typeNameOfParcelable());
+                    onTransactMethodBuilder.addStatement("isNullFlag = result == null ? 0 : 1");
+                    onTransactMethodBuilder.addStatement("$N.writeInt(isNullFlag)", onTransactMethodReplyParameter);
+                    onTransactMethodBuilder.beginControlFlow("if (isNullFlag > 0)");
+                    onTransactMethodBuilder.addStatement("result.writeToParcel($N, $T.PARCELABLE_WRITE_RETURN_VALUE)", onTransactMethodReplyParameter, TypeNameHelper.typeNameOfParcelable());
+                    onTransactMethodBuilder.endControlFlow();
                 }
                 else if (methodElement.getReturnType().getKind() == TypeKind.BOOLEAN)
                 {

@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewPrimitiveListTest).setOnClickListener(this);
         findViewById(R.id.viewTypeListTest).setOnClickListener(this);
         findViewById(R.id.viewEnumTest).setOnClickListener(this);
+        findViewById(R.id.viewNullTest).setOnClickListener(this);
     }
 
     @Override
@@ -97,6 +98,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.viewEnumTest:
             {
                 enumTest();
+                break;
+            }
+            case R.id.viewNullTest:
+            {
+                nullTest();
                 break;
             }
         }
@@ -380,6 +386,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 {
                     Color color = ITestFunctionClientImpl.asInterface(service).enumTest(Color.BLUE);
                     log(color.name());
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name)
+            {
+
+            }
+        }, BIND_AUTO_CREATE);
+    }
+
+    private void nullTest()
+    {
+        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service)
+            {
+                try
+                {
+                    User user1 = ITestFunctionClientImpl.asInterface(service).nullTest(null);
+                    if (user1 != null)
+                    {
+                        log(String.format("name = %s;age = %d", user1.getName(), user1.getAge()));
+                    }
+                    else
+                    {
+                        log("return user is null");
+                    }
                 }
                 catch (Exception e)
                 {

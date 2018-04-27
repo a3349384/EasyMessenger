@@ -36,5 +36,7 @@ public interface ITestFunction
     List<User> typeListTest(List<User> list) throws RemoteException;
 
     Color enumTest(Color color) throws RemoteException;
+
+    User nullTest(User user) throws RemoteException;
 }
 
