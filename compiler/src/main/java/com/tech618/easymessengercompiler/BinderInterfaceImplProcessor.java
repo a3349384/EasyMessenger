@@ -98,7 +98,7 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
 
     private TypeSpec generateCode(TypeElement typeElement, List<ExecutableElement> methodElements)
     {
-        String generatedClassName = typeElement.getSimpleName().toString() + "ServerImpl";
+        String generatedClassName = typeElement.getSimpleName().toString() + "Binder";
         mMessager.printMessage(Diagnostic.Kind.NOTE, "generate class: " + generatedClassName);
 
         FieldSpec fieldSpecInterfaceImpl = FieldSpec.builder(TypeName.get(typeElement.asType()), "mInterfaceImpl", Modifier.PRIVATE).build();

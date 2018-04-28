@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewTypeListTest).setOnClickListener(this);
         findViewById(R.id.viewEnumTest).setOnClickListener(this);
         findViewById(R.id.viewNullTest).setOnClickListener(this);
+
+        ITestFunctionHeler.instance.init(this);
     }
 
     @Override
@@ -110,28 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void voidTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
-        {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
-            {
-                try
-                {
-                    ITestFunctionClientImpl.asInterface(service).voidTest();
-                    log("see log for detail!");
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name)
-            {
-
-            }
-        }, BIND_AUTO_CREATE);
+        ITestFunctionHeler.instance.voidTest();
     }
 
     private void intTest()
