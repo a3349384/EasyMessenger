@@ -28,4 +28,14 @@ public class TypeNameHelper
     {
         return ClassName.get("android.os", "RemoteException");
     }
+
+    public static TypeName typeNameOfContext()
+    {
+        return ClassName.get("android.content", "Context");
+    }
+
+    public static TypeName typeNameOfComponentName()
+    {
+        return ClassName.bestGuess("android.content.ComponentName");
+    }
 }

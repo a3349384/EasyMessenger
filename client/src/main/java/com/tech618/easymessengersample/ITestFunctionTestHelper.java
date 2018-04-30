@@ -14,9 +14,9 @@ import java.util.List;
  * Created by zmy on 2018/4/27.
  */
 
-public class ITestFunctionHelper
+public class ITestFunctionTestHelper
 {
-    public static final ITestFunctionHelper instance = new ITestFunctionHelper();
+    public static final ITestFunctionTestHelper instance = new ITestFunctionTestHelper();
 
     private Context mContext;
     private ITestFunctionClient mInterface;

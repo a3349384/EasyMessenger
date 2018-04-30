@@ -177,13 +177,13 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
             if (methodElement.getReturnType().getKind() == TypeKind.VOID)
             {
                 onTransactMethodBuilder.addStatement("$N.$N($L)", fieldSpecInterfaceImpl, methodElement.getSimpleName(),
-                        getMethodParameterStringByParameterNames(parameterNames));
+                        ParameterHelper.getMethodParameterStringByParameterNames(parameterNames));
             }
             else
             {
                 // add statement like: int result = mInterfaceImpl.intTest(num1, num2);
                 onTransactMethodBuilder.addStatement("$T result = $N.$N($L)", methodElement.getReturnType(),
-                        fieldSpecInterfaceImpl, methodElement.getSimpleName(), getMethodParameterStringByParameterNames(parameterNames));
+                        fieldSpecInterfaceImpl, methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterNames(parameterNames));
             }
 
             onTransactMethodBuilder.addStatement("$N.writeNoException()", onTransactMethodReplyParameter);
@@ -229,22 +229,6 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
     public SourceVersion getSupportedSourceVersion()
     {
         return SourceVersion.latestSupported();
-    }
-
-    private String getMethodParameterStringByParameterNames(List<String> parameterNames)
-    {
-        if (parameterNames.size() == 0)
-        {
-            return "";
-        }
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < parameterNames.size() - 1; i++)
-        {
-            builder.append(parameterNames.get(i));
-            builder.append(", ");
-        }
-        builder.append(parameterNames.get(parameterNames.size() - 1));
-        return builder.toString();
     }
 
     private void log(String log)

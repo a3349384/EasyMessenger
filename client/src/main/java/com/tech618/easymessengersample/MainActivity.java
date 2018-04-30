@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewEnumTest).setOnClickListener(this);
         findViewById(R.id.viewNullTest).setOnClickListener(this);
 
-        ITestFunctionHelper.instance.__init(this);
+        ITestFunctionTestHelper.instance.__init(this);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void voidTest()
     {
         try {
-            ITestFunctionHelper.instance.voidTest();
+            ITestFunctionTestHelper.instance.voidTest();
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -143,10 +143,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //
 //            }
 //        }, BIND_AUTO_CREATE);
-        ITestFunctionHelper.instance.intTestAsync(1, 2, new ITestFunctionHelper.IntCallBack() {
+        ITestFunctionTestHelper.instance.intTestAsync(1, 2, new ITestFunctionTestHelper.IntCallBack() {
             @Override
             public void onSuccess(int result) {
                 Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+                ITestFunctionTestHelper.instance.__destory();
             }
 
             @Override
