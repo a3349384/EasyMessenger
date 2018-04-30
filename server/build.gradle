@@ -33,6 +33,7 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     annotationProcessor project(':compiler')
-    implementation 'com.tech618:gened-ipc-library:1.0.0'
+//    implementation 'com.tech618:gened-ipc-library:1.0.0'
     implementation project(':client-server-common')
+    implementation project(':library')
 }

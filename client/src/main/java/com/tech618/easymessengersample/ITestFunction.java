@@ -1,6 +1,5 @@
 package com.tech618.easymessengersample;
 
-import android.os.Parcelable;
 import android.os.RemoteException;
 
 import com.tech618.easymessenger.BinderInterface;

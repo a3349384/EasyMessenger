@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewEnumTest).setOnClickListener(this);
         findViewById(R.id.viewNullTest).setOnClickListener(this);
 
-        ITestFunctionHeler.instance.init(this);
+        ITestFunctionHelper.instance.__init(this);
     }
 
     @Override
@@ -112,32 +113,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void voidTest()
     {
-        ITestFunctionHeler.instance.voidTest();
+        try {
+            ITestFunctionHelper.instance.voidTest();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private void intTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
-        {
+//        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+//        {
+//            @Override
+//            public void onServiceConnected(ComponentName name, IBinder service)
+//            {
+//                try
+//                {
+//                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClientImpl.asInterface(service).intTest(1, 2)));
+//                }
+//                catch (Exception e)
+//                {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onServiceDisconnected(ComponentName name)
+//            {
+//
+//            }
+//        }, BIND_AUTO_CREATE);
+        ITestFunctionHelper.instance.intTestAsync(1, 2, new ITestFunctionHelper.IntCallBack() {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
-            {
-                try
-                {
-                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClientImpl.asInterface(service).intTest(1, 2)));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+            public void onSuccess(int result) {
+                Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
-            {
+            public void onError(Exception ex) {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void byteTest()
