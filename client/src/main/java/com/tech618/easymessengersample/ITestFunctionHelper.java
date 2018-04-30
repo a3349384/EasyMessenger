@@ -19,7 +19,7 @@ public class ITestFunctionHelper
     public static final ITestFunctionHelper instance = new ITestFunctionHelper();
 
     private Context mContext;
-    private ITestFunction mInterface;
+    private ITestFunctionClient mInterface;
     private List<Runnable> mWaitTasks;
 
     private ServiceConnection mServiceConnection = new ServiceConnection()
@@ -27,7 +27,7 @@ public class ITestFunctionHelper
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
         {
-            mInterface = ITestFunctionClientImpl.asInterface(service);
+            mInterface = ITestFunctionClient.fromBinder(service);
             for (Runnable runnable : mWaitTasks)
             {
                 runnable.run();

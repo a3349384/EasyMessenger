@@ -1,7 +1,5 @@
 package com.tech618.easymessengersample;
 
-import android.os.RemoteException;
-
 import com.tech618.easymessenger.BinderInterface;
 import com.tech618.easymessengerclientservercommon.Color;
 import com.tech618.easymessengerclientservercommon.User;
@@ -14,28 +12,28 @@ import java.util.List;
 @BinderInterface
 public interface ITestFunction
 {
-    void voidTest() throws RemoteException;
+    void voidTest();
 
-    int intTest(int num1, int num2) throws RemoteException;
+    int intTest(int num1, int num2);
 
-    byte byteTest(byte b1, byte b2) throws RemoteException;
+    byte byteTest(byte b1, byte b2);
 
-    long longTest(long l1, long l2) throws RemoteException;
+    long longTest(long l1, long l2);
 
-    float floatTest(float f1, float f2) throws RemoteException;
+    float floatTest(float f1, float f2);
 
-    boolean booleanTest(boolean b) throws RemoteException;
+    boolean booleanTest(boolean b);
 
-    String stringTest(String s1, String s2) throws RemoteException;
+    String stringTest(String s1, String s2);
 
-    User parcelableTest(User user) throws RemoteException;
+    User parcelableTest(User user);
 
-    List<Integer> primitiveListTest(List<Integer> list) throws RemoteException;
+    List<Integer> primitiveListTest(List<Integer> list);
 
-    List<User> typeListTest(List<User> list) throws RemoteException;
+    List<User> typeListTest(List<User> list);
 
-    Color enumTest(Color color) throws RemoteException;
+    Color enumTest(Color color);
 
-    User nullTest(User user) throws RemoteException;
+    User nullTest(User user);
 }
 

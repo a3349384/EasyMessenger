@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            {
 //                try
 //                {
-//                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClientImpl.asInterface(service).intTest(1, 2)));
+//                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClient.fromBinder(service).intTest(1, 2)));
 //                }
 //                catch (Exception e)
 //                {
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 try
                 {
-                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClientImpl.asInterface(service).byteTest((byte) 1, (byte) 2)));
+                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClient.fromBinder(service).byteTest((byte) 1, (byte) 2)));
                 }
                 catch (Exception e)
                 {
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 try
                 {
-                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClientImpl.asInterface(service).longTest(1, 2)));
+                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClient.fromBinder(service).longTest(1, 2)));
                 }
                 catch (Exception e)
                 {
@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 try
                 {
-                    log(String.format("%f + %f = %f", 1f, 2f, ITestFunctionClientImpl.asInterface(service).floatTest(1f, 2f)));
+                    log(String.format("%f + %f = %f", 1f, 2f, ITestFunctionClient.fromBinder(service).floatTest(1f, 2f)));
                 }
                 catch (Exception e)
                 {
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 try
                 {
-                    log("" + ITestFunctionClientImpl.asInterface(service).booleanTest(false));
+                    log("" + ITestFunctionClient.fromBinder(service).booleanTest(false));
                 }
                 catch (Exception e)
                 {
@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 try
                 {
-                    log(String.format("%s + %s = %s", "hello", "world", ITestFunctionClientImpl.asInterface(service).stringTest("hello", "world")));
+                    log(String.format("%s + %s = %s", "hello", "world", ITestFunctionClient.fromBinder(service).stringTest("hello", "world")));
                 }
                 catch (Exception e)
                 {
@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     user.setName("Bob");
                     user.setAge(11);
 
-                    User user1 = ITestFunctionClientImpl.asInterface(service).parcelableTest(user);
+                    User user1 = ITestFunctionClient.fromBinder(service).parcelableTest(user);
                     log(String.format("name = %s;age = %d", user1.getName(), user1.getAge()));
                 }
                 catch (Exception e)
@@ -323,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     List<Integer> list = new ArrayList<>();
                     list.add(1);
                     list.add(2);
-                    List<Integer> list1 = ITestFunctionClientImpl.asInterface(service).primitiveListTest(list);
+                    List<Integer> list1 = ITestFunctionClient.fromBinder(service).primitiveListTest(list);
                     log(String.format("%s", list1.toString()));
                 }
                 catch (Exception e)
@@ -355,7 +355,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     user1.setAge(12);
                     list.add(user1);
 
-                    List<User> list1 = ITestFunctionClientImpl.asInterface(service).typeListTest(list);
+                    List<User> list1 = ITestFunctionClient.fromBinder(service).typeListTest(list);
                     log(String.format("%s", list1.toString()));
                 }
                 catch (Exception e)
@@ -381,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 try
                 {
-                    Color color = ITestFunctionClientImpl.asInterface(service).enumTest(Color.BLUE);
+                    Color color = ITestFunctionClient.fromBinder(service).enumTest(Color.BLUE);
                     log(color.name());
                 }
                 catch (Exception e)
@@ -407,7 +407,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 try
                 {
-                    User user1 = ITestFunctionClientImpl.asInterface(service).nullTest(null);
+                    User user1 = ITestFunctionClient.fromBinder(service).nullTest(null);
                     if (user1 != null)
                     {
                         log(String.format("name = %s;age = %d", user1.getName(), user1.getAge()));

@@ -11,6 +11,7 @@ import com.tech618.easymessenger.BinderInterface;
 
 import java.io.IOException;
 import java.lang.management.MemoryManagerMXBean;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +30,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
@@ -111,7 +113,7 @@ public class BinderInterfaceProcessor extends AbstractProcessor
 
     private TypeSpec generateCode(TypeElement typeElement, List<ExecutableElement> methodElements)
     {
-        String generatedClassName = typeElement.getSimpleName().toString() + "ClientImpl";
+        String generatedClassName = typeElement.getSimpleName().toString() + "Client";
         mMessager.printMessage(Diagnostic.Kind.NOTE, "generate class: " + generatedClassName);
 
         FieldSpec fieldSpecRemote = FieldSpec.builder(TypeNameHelper.typeNameOfIBinder(), "mRemote", Modifier.PRIVATE).build();
@@ -124,19 +126,18 @@ public class BinderInterfaceProcessor extends AbstractProcessor
                                                    .build();
 
         ParameterSpec parameterSpecBinder = ParameterSpec.builder(TypeNameHelper.typeNameOfIBinder(), "binder").build();
-        MethodSpec methodAsInterface = MethodSpec.methodBuilder("asInterface")
+        MethodSpec methodAsInterface = MethodSpec.methodBuilder("fromBinder")
                                                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                                                .addParameter(parameterSpecBinder)
-                                               .returns(TypeName.get(typeElement.asType()))
+                                               .returns(ClassName.bestGuess(generatedClassName))
                                                .addStatement("return new $L($N)", generatedClassName, parameterSpecBinder)
                                                .build();
 
         TypeSpec.Builder typeImplBuilder = TypeSpec.classBuilder(generatedClassName)
-                                                 .addSuperinterface(TypeName.get(typeElement.asType())) //实现指定接口
-                                                 .addModifiers(Modifier.PUBLIC)
-                                                 .addField(fieldSpecRemote)
-                                                 .addMethod(methodSpecConstructor)
-                                                 .addMethod(methodAsInterface);
+                .addModifiers(Modifier.PUBLIC)
+                .addField(fieldSpecRemote)
+                .addMethod(methodSpecConstructor)
+                .addMethod(methodAsInterface);
         for (int i = 0; i < methodElements.size(); i++)
         {
             ExecutableElement methodElement = methodElements.get(i);
@@ -147,7 +148,6 @@ public class BinderInterfaceProcessor extends AbstractProcessor
             typeImplBuilder.addField(fieldSpecMethodId);
             MethodSpec.Builder interfaceMethodBuilder = MethodSpec.methodBuilder(methodName)
                                                                 .addModifiers(Modifier.PUBLIC)
-                                                                .addAnnotation(Override.class)
                                                                 .returns(TypeName.get(methodElement.getReturnType()))
                                                                 .addException(ClassName.get("android.os", "RemoteException"));
 
