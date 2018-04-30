@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.tech618.easymessenger.IntCallback;
 import com.tech618.easymessengerclientservercommon.Color;
 import com.tech618.easymessengerclientservercommon.User;
 
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewEnumTest).setOnClickListener(this);
         findViewById(R.id.viewNullTest).setOnClickListener(this);
 
-        ITestFunctionTestHelper.instance.__init(this);
+        ITestFunctionHelper.instance.__init(this, getServiceComponentName());
     }
 
     @Override
@@ -122,32 +123,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void intTest()
     {
-//        bindService(new Intent(getServiceIntent()), new ServiceConnection()
-//        {
-//            @Override
-//            public void onServiceConnected(ComponentName name, IBinder service)
-//            {
-//                try
-//                {
-//                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClient.fromBinder(service).intTest(1, 2)));
-//                }
-//                catch (Exception e)
-//                {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            @Override
-//            public void onServiceDisconnected(ComponentName name)
-//            {
-//
-//            }
-//        }, BIND_AUTO_CREATE);
-        ITestFunctionTestHelper.instance.intTestAsync(1, 2, new ITestFunctionTestHelper.IntCallBack() {
+        ITestFunctionHelper.instance.intTestAsync(1, 2, new IntCallback() {
             @Override
             public void onSuccess(int result) {
                 Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
-                ITestFunctionTestHelper.instance.__destory();
             }
 
             @Override
@@ -435,9 +414,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Intent getServiceIntent()
     {
         Intent intent = new Intent();
-        intent.setComponent(new ComponentName("com.tech618.easymessengerserver", "com.tech618.easymessengerserver.ServerService"));
+        intent.setComponent(getServiceComponentName());
 
         return intent;
+    }
+
+    private ComponentName getServiceComponentName()
+    {
+        return new ComponentName("com.tech618.easymessengerserver", "com.tech618.easymessengerserver.ServerService");
     }
 
     private void log(String s)

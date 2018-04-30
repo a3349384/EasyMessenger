@@ -383,8 +383,7 @@ public class BinderInterfaceProcessor extends AbstractProcessor
         String methodName = methodElement.getSimpleName().toString() + "Async";
         MethodSpec.Builder interfaceMethodBuilder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC)
-                .returns(TypeName.VOID)
-                .addException(TypeNameHelper.typeNameOfRemoteException());
+                .returns(TypeName.VOID);
         for (VariableElement parameterElement : methodElement.getParameters())
         {
             interfaceMethodBuilder.addParameter(TypeName.get(parameterElement.asType()), parameterElement.getSimpleName().toString(), Modifier.FINAL);
