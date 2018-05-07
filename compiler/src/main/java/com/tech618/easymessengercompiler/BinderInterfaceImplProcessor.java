@@ -141,6 +141,7 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
 
             onTransactMethodBuilder.beginControlFlow("case $N:", fieldSpecMethodId);
             List<String> parameterNames = new ArrayList<>(methodElement.getParameters().size());
+            boolean isNullFlagDefined = false;
             for (VariableElement parameterElement : methodElement.getParameters())
             {
                 String parameterClassName = parameterElement.asType().toString();
@@ -148,7 +149,15 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
                 {
                     //the parameter should be a thirdparty class, we regard it as a parceable
                     onTransactMethodBuilder.addStatement("$1T $2N = null", parameterElement.asType(), parameterElement.getSimpleName());
-                    onTransactMethodBuilder.addStatement("int isNullFlag = $N.readInt()", onTransactMethodDataParameter);
+                    if (!isNullFlagDefined)
+                    {
+                        onTransactMethodBuilder.addStatement("int isNullFlag = $N.readInt()", onTransactMethodDataParameter);
+                        isNullFlagDefined = true;
+                    }
+                    else
+                    {
+                        onTransactMethodBuilder.addStatement("isNullFlag = $N.readInt()", onTransactMethodDataParameter);
+                    }
                     onTransactMethodBuilder.beginControlFlow("if (isNullFlag > 0)");
                     onTransactMethodBuilder.addStatement("$N = $T.CREATOR.createFromParcel($N)", parameterElement.getSimpleName(),
                             parameterElement.asType(), onTransactMethodDataParameter);
@@ -191,9 +200,9 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
             {
                 if (ClassHelper.isThirdPartyClass(methodElement.getReturnType().toString()))
                 {
-                    onTransactMethodBuilder.addStatement("isNullFlag = result == null ? 0 : 1");
-                    onTransactMethodBuilder.addStatement("$N.writeInt(isNullFlag)", onTransactMethodReplyParameter);
-                    onTransactMethodBuilder.beginControlFlow("if (isNullFlag > 0)");
+                    onTransactMethodBuilder.addStatement("int isResultNullFlag = result == null ? 0 : 1");
+                    onTransactMethodBuilder.addStatement("$N.writeInt(isResultNullFlag)", onTransactMethodReplyParameter);
+                    onTransactMethodBuilder.beginControlFlow("if (isResultNullFlag > 0)");
                     onTransactMethodBuilder.addStatement("result.writeToParcel($N, $T.PARCELABLE_WRITE_RETURN_VALUE)", onTransactMethodReplyParameter, TypeNameHelper.typeNameOfParcelable());
                     onTransactMethodBuilder.endControlFlow();
                 }

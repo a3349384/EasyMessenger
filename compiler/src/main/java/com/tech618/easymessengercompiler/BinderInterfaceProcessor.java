@@ -165,13 +165,22 @@ public class BinderInterfaceProcessor extends AbstractProcessor
             interfaceMethodBuilder.addStatement("$1T data = $1T.obtain()", TypeNameHelper.typeNameOfParcel());
             interfaceMethodBuilder.addStatement("$1T reply = $1T.obtain()", TypeNameHelper.typeNameOfParcel());
             interfaceMethodBuilder.beginControlFlow("try");
+            boolean isNullFlagDefined = false;
             for (VariableElement parameterElement : methodElement.getParameters())
             {
                 mMessager.printMessage(Diagnostic.Kind.NOTE, "parameter type:" + parameterElement.asType().toString());
                 if (ClassHelper.isThirdPartyClass(parameterElement.asType().toString()))
                 {
                     //the parameter should be a thirdparty class, we regard it as a parceable
-                    interfaceMethodBuilder.addStatement("int isNullFlag = $N == null ? 0 : 1", parameterElement.getSimpleName());
+                    if (!isNullFlagDefined)
+                    {
+                        interfaceMethodBuilder.addStatement("int isNullFlag = $N == null ? 0 : 1", parameterElement.getSimpleName());
+                        isNullFlagDefined = true;
+                    }
+                    else
+                    {
+                        interfaceMethodBuilder.addStatement("isNullFlag = $N == null ? 0 : 1", parameterElement.getSimpleName());
+                    }
                     interfaceMethodBuilder.addStatement("data.writeInt(isNullFlag)");
                     interfaceMethodBuilder.beginControlFlow("if (isNullFlag > 0)");
                     interfaceMethodBuilder.addStatement("$N.writeToParcel(data, 0)", parameterElement.getSimpleName());
@@ -197,8 +206,8 @@ public class BinderInterfaceProcessor extends AbstractProcessor
                 String returnTypeClassName = methodElement.getReturnType().toString();
                 if (ClassHelper.isThirdPartyClass(returnTypeClassName))
                 {
-                    interfaceMethodBuilder.addStatement("isNullFlag = reply.readInt()");
-                    interfaceMethodBuilder.beginControlFlow("if (isNullFlag > 0)");
+                    interfaceMethodBuilder.addStatement("int isResultNullFlag = reply.readInt()");
+                    interfaceMethodBuilder.beginControlFlow("if (isResultNullFlag > 0)");
                     interfaceMethodBuilder.addStatement("return $T.CREATOR.createFromParcel(reply)", methodElement.getReturnType());
                     interfaceMethodBuilder.nextControlFlow("else");
                     interfaceMethodBuilder.addStatement("return null");
