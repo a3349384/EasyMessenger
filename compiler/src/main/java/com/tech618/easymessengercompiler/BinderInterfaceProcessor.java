@@ -446,22 +446,30 @@ public class BinderInterfaceProcessor extends AbstractProcessor
                     .addStatement("$L.$N($L)", clientName, methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters()))
                     .endControlFlow()
                     .beginControlFlow("catch (Exception ex)")
+                    .beginControlFlow("if($L != null)", callbackName)
                     .addStatement("$L.onError(ex)", callbackName)
+                    .endControlFlow()
                     .addStatement("return")
                     .endControlFlow()
-                    .addStatement("$L.onSuccess()", callbackName);
+                    .beginControlFlow("if($L != null)", callbackName)
+                    .addStatement("$L.onSuccess()", callbackName)
+                    .endControlFlow();
         }
         else
         {
             runMethodBuilder.addStatement("$T result", methodElement.getReturnType())
-                .beginControlFlow("try")
-                .addStatement("result = $L.$N($L)", clientName, methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters()))
-                .endControlFlow()
-                .beginControlFlow("catch (Exception ex)")
-                .addStatement("$L.onError(ex)", callbackName)
-                .addStatement("return")
-                .endControlFlow()
-                .addStatement("$L.onSuccess(result)", callbackName);
+                    .beginControlFlow("try")
+                    .addStatement("result = $L.$N($L)", clientName, methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters()))
+                    .endControlFlow()
+                    .beginControlFlow("catch (Exception ex)")
+                    .beginControlFlow("if($L != null)", callbackName)
+                    .addStatement("$L.onError(ex)", callbackName)
+                    .endControlFlow()
+                    .addStatement("return")
+                    .endControlFlow()
+                    .beginControlFlow("if($L != null)", callbackName)
+                    .addStatement("$L.onSuccess(result)", callbackName)
+                    .endControlFlow();
         }
         TypeSpec runnableInnerType = TypeSpec.anonymousClassBuilder("")
                 .addSuperinterface(Runnable.class)

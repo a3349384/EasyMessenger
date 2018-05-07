@@ -39,8 +39,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     testImplementation 'junit:junit:4.12'
-    //annotationProcessor project(':compiler')
-    annotationProcessor 'com.tech618:gened-ipc-compiler:1.0.5'
+    annotationProcessor project(':compiler')
+    //annotationProcessor 'com.tech618:gened-ipc-compiler:1.0.5'
     implementation 'com.tech618:gened-ipc-library:1.0.1'
     implementation project(':client-server-common')
     implementation project(':library')
