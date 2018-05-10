@@ -260,16 +260,17 @@ public class BinderInterfaceProcessor extends AbstractProcessor
         ParameterSpec componentNameParameter = ParameterSpec.builder(TypeNameHelper.typeNameOfComponentName(), "name").build();
         ParameterSpec ibinderParameter = ParameterSpec.builder(TypeNameHelper.typeNameOfIBinder(), "service").build();
         MethodSpec onServiceConnectedMethod = MethodSpec.methodBuilder("onServiceConnected")
-                .addAnnotation(Override.class)
-                .addModifiers(Modifier.PUBLIC)
-                .returns(TypeName.VOID)
-                .addParameter(componentNameParameter)
-                .addParameter(ibinderParameter)
-                .addStatement("$N = $T.fromBinder($N)", clientField, clientType, ibinderParameter)
-                .beginControlFlow("for ($T runnable : $N)", Runnable.class, waitTaskField)
-                .addStatement("runnable.run()")
-                .endControlFlow()
-                .build();
+                                                      .addAnnotation(Override.class)
+                                                      .addModifiers(Modifier.PUBLIC)
+                                                      .returns(TypeName.VOID)
+                                                      .addParameter(componentNameParameter)
+                                                      .addParameter(ibinderParameter)
+                                                      .addStatement("$N = $T.fromBinder($N)", clientField, clientType, ibinderParameter)
+                                                      .beginControlFlow("for ($T runnable : $N)", Runnable.class, waitTaskField)
+                                                      .addStatement("runnable.run()")
+                                                      .endControlFlow()
+                                                      .addStatement("$N.clear()", waitTaskField)
+                                                      .build();
         MethodSpec onServiceDisconnectedMethod = MethodSpec.methodBuilder("onServiceDisconnected")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
