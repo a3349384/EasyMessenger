@@ -1,2 +1,4 @@
 com.tech618.easymessengercompiler.BinderInterfaceProcessor
 com.tech618.easymessengercompiler.BinderInterfaceImplProcessor
+com.tech618.easymessengercompiler.BroadcastInterfaceProcessor
+com.tech618.easymessengercompiler.BroadcastReceiverProcessor

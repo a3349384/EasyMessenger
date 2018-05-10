@@ -40,8 +40,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewTypeListTest).setOnClickListener(this);
         findViewById(R.id.viewEnumTest).setOnClickListener(this);
         findViewById(R.id.viewNullTest).setOnClickListener(this);
+        findViewById(R.id.broadcastTest).setOnClickListener(this);
 
         ITestFunctionHelper.instance.__init(this, getServiceComponentName());
+        IBroadcastMessageBroadcastHelper.instance.__init(this.getApplicationContext());
+        BroadcastReceiverHelper.instance.__init(this.getApplicationContext());
     }
 
     @Override
@@ -107,6 +110,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.viewNullTest:
             {
                 nullTest();
+                break;
+            }
+            case R.id.broadcastTest:
+            {
+                broadcastTest();
                 break;
             }
         }
@@ -409,6 +417,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         }, BIND_AUTO_CREATE);
+    }
+
+    private void broadcastTest()
+    {
+        IBroadcastMessageBroadcastHelper.instance.test();
     }
 
     private Intent getServiceIntent()

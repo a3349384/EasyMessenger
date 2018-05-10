@@ -69,5 +69,10 @@
                 android:text="null test"
                 android:textAllCaps="false"
                 android:id="@+id/viewNullTest"/>
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="brodcast test"
+                android:textAllCaps="false"
+                android:id="@+id/broadcastTest"/>
     </LinearLayout>
 </ScrollView>

@@ -38,4 +38,19 @@ public class TypeNameHelper
     {
         return ClassName.bestGuess("android.content.ComponentName");
     }
+
+    public static TypeName typeNameOfIntent()
+    {
+        return ClassName.bestGuess("android.content.Intent");
+    }
+
+    public static TypeName typeNameOfBroadcastReceiver()
+    {
+        return ClassName.bestGuess("android.content.BroadcastReceiver");
+    }
+
+    public static TypeName typeNameOfIntentFilter()
+    {
+        return ClassName.bestGuess("android.content.IntentFilter");
+    }
 }
