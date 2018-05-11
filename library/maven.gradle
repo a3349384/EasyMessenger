@@ -18,7 +18,7 @@ uploadArchives {
             }
             pom.project {
                 name 'gened'
-                version '1.0.1'
+                version '1.0.2'
                 artifactId 'gened-ipc-library'
                 groupId 'com.tech618'
                 packaging 'aar'

@@ -113,7 +113,7 @@ public class BroadcastInterfaceProcessor extends AbstractProcessor
 
     private TypeSpec generateHelper(TypeElement typeElement, List<ExecutableElement> methodElements, String broadcastKey)
     {
-        String generatedClassName = typeElement.getSimpleName().toString() + "BroadcastHelper";
+        String generatedClassName = typeElement.getSimpleName().toString() + "Helper";
         TypeName helperType = ClassName.bestGuess(generatedClassName);
         FieldSpec fieldSpecContext = FieldSpec.builder(TypeNameHelper.typeNameOfContext(), "mAppContext", Modifier.PRIVATE).build();
         //单例
