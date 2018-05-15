@@ -13,13 +13,13 @@ uploadArchives {
     configuration = configurations.archives
     repositories {
         mavenDeployer {
-            repository(url: "http://192.168.1.155:8081/repository/gened.ipc.library/") {
+            repository(url: "http://192.168.1.155:8081/repository/android_comm/") {
                 authentication(userName: "zmy", password: "111111")
             }
             pom.project {
-                name 'gened'
-                version '1.0.2'
-                artifactId 'gened-ipc-library'
+                name 'ipc-library'
+                version '1.0.3'
+                artifactId 'ipc-library'
                 groupId 'com.tech618'
                 packaging 'aar'
                 description 'ipc library'
