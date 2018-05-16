@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.broadcastTest).setOnClickListener(this);
 
         ITestFunctionHelper.instance.__init(this, getServiceComponentName());
-        IBroadcastMessageBroadcastHelper.instance.__init(this.getApplicationContext());
+        IBroadcastMessageHelper.instance.__init(this);
         BroadcastReceiverHelper.instance.__init(this.getApplicationContext());
     }
 
@@ -421,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void broadcastTest()
     {
-        IBroadcastMessageBroadcastHelper.instance.test();
+        IBroadcastMessageHelper.instance.test();
     }
 
     private Intent getServiceIntent()

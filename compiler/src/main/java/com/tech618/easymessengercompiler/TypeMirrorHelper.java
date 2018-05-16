@@ -72,6 +72,35 @@ public class TypeMirrorHelper
         }
     }
 
+    public static String getIntentReadString(String name, TypeMirror typeMirror)
+    {
+        String classString = typeMirror.toString();
+        if (classString.contentEquals(int.class.getCanonicalName()))
+        {
+            return String.format("getIntExtra(\"%s\", 0)", name);
+        }
+        else if (classString.contentEquals(byte.class.getCanonicalName()))
+        {
+            return String.format("getByteExtra(\"%s\", (byte) 0)", name);
+        }
+        else if (classString.contentEquals(long.class.getCanonicalName()))
+        {
+            return String.format("getLongExtra(\"%s\", 0)", name);
+        }
+        else if (classString.contentEquals(float.class.getCanonicalName()))
+        {
+            return String.format("getFloatExtra(\"%s\", 0)", name);
+        }
+        else if (classString.contentEquals(String.class.getCanonicalName()))
+        {
+            return String.format("getStringExtra(\"%s\")", name);
+        }
+        else
+        {
+            return "null";
+        }
+    }
+
     public static String getJavaTypeStringByTypeKind(TypeMirror typeMirror)
     {
         String classStrng = typeMirror.toString();

@@ -28,10 +28,6 @@ public class IBroadcastRecerverTestHelper
         {
             String key = intent.getStringExtra("");
             String methodName = intent.getStringExtra("");
-            if (key.contentEquals(""))
-            {
-
-            }
         }
     }
 }

@@ -15,4 +15,9 @@ public class MessageBroadcastReceiver
     {
         Log.d("MessageBroadcastReceiver", "test called");
     }
+
+    public void testWithArgs(int num)
+    {
+
+    }
 }

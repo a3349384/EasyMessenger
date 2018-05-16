@@ -144,15 +144,22 @@ public class BroadcastInterfaceProcessor extends AbstractProcessor
                                                  .addMethod(initMethod);
         for (ExecutableElement methodElement : methodElements)
         {
-            MethodSpec interfaceMethod = MethodSpec.methodBuilder(methodElement.getSimpleName().toString())
-                                                 .addModifiers(Modifier.PUBLIC)
-                                                 .returns(TypeName.VOID)
-                                                 .addStatement("$1T intent = new $1T($2S)", TypeNameHelper.typeNameOfIntent(), INTENT_ACTION)
-                                                 .addStatement("intent.putExtra($S, $N)", "broadcastKey", broadcastKeyField)
-                                                 .addStatement("intent.putExtra($S, $S)", "methodName", methodElement.getSimpleName().toString())
-                                                 .addStatement("$N.sendBroadcast(intent)", contextFiled)
-                                                 .build();
-            helperBuilder.addMethod(interfaceMethod);
+            MethodSpec.Builder interfaceMethodBuilder = MethodSpec.methodBuilder(methodElement.getSimpleName().toString())
+                                                                .addModifiers(Modifier.PUBLIC)
+                                                                .returns(TypeName.VOID);
+            for (VariableElement parameterElement : methodElement.getParameters())
+            {
+                interfaceMethodBuilder.addParameter(TypeName.get(parameterElement.asType()), parameterElement.getSimpleName().toString());
+            }
+            interfaceMethodBuilder.addStatement("$1T intent = new $1T($2S)", TypeNameHelper.typeNameOfIntent(), INTENT_ACTION)
+                    .addStatement("intent.putExtra($S, $N)", "broadcastKey", broadcastKeyField)
+                    .addStatement("intent.putExtra($S, $S)", "methodName", methodElement.getSimpleName().toString());
+            for (VariableElement parameterElement : methodElement.getParameters())
+            {
+                interfaceMethodBuilder.addStatement("intent.putExtra($S, $L)", parameterElement.getSimpleName(), parameterElement.getSimpleName());
+            }
+            interfaceMethodBuilder.addStatement("$N.sendBroadcast(intent)", contextFiled);
+            helperBuilder.addMethod(interfaceMethodBuilder.build());
         }
         return helperBuilder.build();
     }

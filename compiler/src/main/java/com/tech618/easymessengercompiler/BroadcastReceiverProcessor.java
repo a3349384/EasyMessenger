@@ -28,6 +28,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
@@ -130,8 +131,13 @@ public class BroadcastReceiverProcessor extends AbstractProcessor
                 if (elementMember.getKind() == ElementKind.METHOD && elementMember.getModifiers().size() == 1
                         && elementMember.getModifiers().contains(Modifier.PUBLIC))
                 {
-                    onReceiveMethodBuilder.beginControlFlow("case $S:", elementMember.getSimpleName())
-                            .addStatement("$L.$L()", entry.getKey(), elementMember.getSimpleName())
+                    ExecutableElement methodElement = (ExecutableElement) elementMember;
+                    onReceiveMethodBuilder.beginControlFlow("case $S:", methodElement.getSimpleName());
+                    for (VariableElement parameterElement : methodElement.getParameters())
+                    {
+                        onReceiveMethodBuilder.addStatement("$T $N = intent.$L", TypeName.get(parameterElement.asType()), parameterElement.getSimpleName(), TypeMirrorHelper.getIntentReadString(parameterElement.getSimpleName().toString(), parameterElement.asType()));
+                    }
+                    onReceiveMethodBuilder.addStatement("$L.$L($L)", entry.getKey(), methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters()))
                             .addStatement("break")
                             .endControlFlow();
                 }

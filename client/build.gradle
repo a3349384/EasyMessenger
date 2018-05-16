@@ -20,14 +20,7 @@ android {
 
 repositories {
     maven {
-        url 'http://192.168.1.155:8081/repository/gened.ipc.library/'
-        credentials {
-            username 'zmy'
-            password '111111'
-        }
-    }
-    maven {
-        url 'http://192.168.1.155:8081/repository/gened.ipc.compiler/'
+        url 'http://192.168.1.155:8081/repository/android_comm/'
         credentials {
             username 'zmy'
             password '111111'
