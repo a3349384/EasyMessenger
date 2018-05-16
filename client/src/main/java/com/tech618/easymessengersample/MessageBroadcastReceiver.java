@@ -1,9 +1,9 @@
 package com.tech618.easymessengersample;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.tech618.easymessenger.BrodcastReceiver;
+import com.tech618.easymessengerclientservercommon.User;
 
 /**
  * Created by zmy on 2018/5/10.
@@ -17,6 +17,11 @@ public class MessageBroadcastReceiver
     }
 
     public void testWithArgs(int num)
+    {
+
+    }
+
+    public void testUser(User user)
     {
 
     }

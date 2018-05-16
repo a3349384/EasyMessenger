@@ -9,11 +9,8 @@ import com.squareup.javapoet.TypeSpec;
 import com.tech618.easymessenger.BrodcastReceiver;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +26,8 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
@@ -135,7 +134,48 @@ public class BroadcastReceiverProcessor extends AbstractProcessor
                     onReceiveMethodBuilder.beginControlFlow("case $S:", methodElement.getSimpleName());
                     for (VariableElement parameterElement : methodElement.getParameters())
                     {
-                        onReceiveMethodBuilder.addStatement("$T $N = intent.$L", TypeName.get(parameterElement.asType()), parameterElement.getSimpleName(), TypeMirrorHelper.getIntentReadString(parameterElement.getSimpleName().toString(), parameterElement.asType()));
+                        String parameterClassName = parameterElement.asType().toString();
+                        TypeMirror parameterType = parameterElement.asType();
+                        if (parameterType instanceof ArrayType)
+                        {
+                            //array,example: int[],string[],paracelable[]
+                            TypeMirror parameterComponentType = ((ArrayType) parameterType).getComponentType();
+                            String parameterComponentClassName = parameterComponentType.toString();
+                            if (TypeMirrorHelper.isInt(parameterComponentType))
+                            {
+
+                            }
+                            else if (TypeMirrorHelper.isString(parameterComponentType))
+                            {
+
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                        else if (ClassHelper.isThirdPartyClass(parameterClassName))
+                        {
+                            //regard the parameter as a parceable type
+                            //generate like: User user = intent.getParcelableExtra("")
+                            onReceiveMethodBuilder.addStatement("$T $N = intent.getParcelableExtra($S)",
+                                    TypeName.get(parameterElement.asType()),
+                                    parameterElement.getSimpleName(),
+                                    parameterElement.getSimpleName().toString());
+                        }
+                        else if (ClassHelper.isList(parameterClassName))
+                        {
+                            //list parameter type
+                        }
+                        else
+                        {
+                            //base type, int, bool, etc
+                            //generate like: int num = intent.readIntExtra("num", 0)
+                            onReceiveMethodBuilder.addStatement("$T $N = intent.$L",
+                                    TypeName.get(parameterElement.asType()),
+                                    parameterElement.getSimpleName(),
+                                    TypeMirrorHelper.getIntentReadString(parameterElement.getSimpleName().toString(), parameterElement.asType()));
+                        }
                     }
                     onReceiveMethodBuilder.addStatement("$L.$L($L)", entry.getKey(), methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters()))
                             .addStatement("break")

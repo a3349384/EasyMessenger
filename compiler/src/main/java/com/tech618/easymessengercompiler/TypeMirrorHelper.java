@@ -129,4 +129,16 @@ public class TypeMirrorHelper
             return "null";
         }
     }
+
+    public static boolean isInt(TypeMirror typeMirror)
+    {
+        String className = typeMirror.toString();
+        return className.contentEquals(int.class.getCanonicalName());
+    }
+
+    public static boolean isString(TypeMirror typeMirror)
+    {
+        String className = typeMirror.toString();
+        return className.contentEquals(String.class.getCanonicalName());
+    }
 }

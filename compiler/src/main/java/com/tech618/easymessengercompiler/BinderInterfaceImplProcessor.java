@@ -165,7 +165,6 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
                 }
                 else if (ClassHelper.isList(parameterClassName))
                 {
-                    List<Integer> list = new ArrayList<>();
                     onTransactMethodBuilder.addStatement("$T $N = new $T<>()", parameterElement.asType(), parameterElement.getSimpleName(), ArrayList.class);
                     onTransactMethodBuilder.addStatement("$N.readList($N, getClass().getClassLoader())", onTransactMethodDataParameter, parameterElement.getSimpleName());
                 }

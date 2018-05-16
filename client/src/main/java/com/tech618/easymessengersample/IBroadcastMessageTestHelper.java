@@ -33,7 +33,6 @@ public class IBroadcastMessageTestHelper
         intent.putExtra("broadcastKey", mBroadcastKey);
         intent.putExtra("methodName", "testWithArgs");
         intent.putExtra("num", num);
-        intent.getStringExtra(null);
         mAppContext.sendBroadcast(intent);
     }
 }

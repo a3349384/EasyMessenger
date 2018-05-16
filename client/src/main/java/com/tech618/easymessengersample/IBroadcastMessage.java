@@ -12,4 +12,6 @@ public interface IBroadcastMessage
     void test();
 
     void testWithArgs(int num);
+
+    void testUsers(User[] users);
 }
