@@ -6,7 +6,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 
 repositories {
     maven {
-        url 'http://192.168.1.155:8081/repository/gened.ipc.library/'
+        url 'http://192.168.1.155:8081/repository/android_comm/'
         credentials {
             username 'zmy'
             password '111111'
@@ -17,6 +17,6 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.squareup:javapoet:1.10.0'
-    implementation 'com.tech618:gened-ipc-library:1.0.2'
+    implementation 'com.tech618:ipc-library:1.0.3'
 //    implementation project(':library')
 }

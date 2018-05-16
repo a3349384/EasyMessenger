@@ -18,7 +18,7 @@ uploadArchives {
             }
             pom.project {
                 name 'ipc-compiler'
-                version '1.0.12'
+                version '1.0.13'
                 artifactId 'ipc-compiler'
                 groupId 'com.tech618'
                 packaging 'aar'
