@@ -18,8 +18,6 @@ import com.tech618.easymessenger.ResultCallBack;
 import com.tech618.easymessenger.VoidCallback;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -124,6 +122,10 @@ public class BinderInterfaceProcessor extends AbstractProcessor
     {
         String generatedClassName = getClientFullName(typeElement);
         FieldSpec fieldSpecRemote = FieldSpec.builder(TypeNameHelper.typeNameOfIBinder(), "mRemote", Modifier.PRIVATE).build();
+        FieldSpec fieldSpecTransactionCode = FieldSpec.builder(int.class, "TRANSACTION_CODE", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+                .initializer("$T.FIRST_CALL_TRANSACTION + $L", TypeNameHelper.typeNameOfIBinder(), 1)
+                .build();
+
         ParameterSpec parameterSpecRemote = ParameterSpec.builder(TypeNameHelper.typeNameOfIBinder(), "remote").build();
 
         MethodSpec methodSpecConstructor = MethodSpec.constructorBuilder()
@@ -140,19 +142,17 @@ public class BinderInterfaceProcessor extends AbstractProcessor
                                                .addStatement("return new $L($N)", generatedClassName, parameterSpecBinder)
                                                .build();
 
+
         TypeSpec.Builder typeImplBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addField(fieldSpecRemote)
+                .addField(fieldSpecTransactionCode)
                 .addMethod(methodSpecConstructor)
                 .addMethod(methodAsInterface);
         for (int i = 0; i < methodElements.size(); i++)
         {
             ExecutableElement methodElement = methodElements.get(i);
             String methodName = methodElement.getSimpleName().toString();
-            FieldSpec fieldSpecMethodId = FieldSpec.builder(TypeName.INT, "TRANSACTION_" + methodName, Modifier.PRIVATE, Modifier.STATIC)
-                                                  .initializer("$T.FIRST_CALL_TRANSACTION + $L", TypeNameHelper.typeNameOfIBinder(), i + 1)
-                                                  .build();
-            typeImplBuilder.addField(fieldSpecMethodId);
             MethodSpec.Builder interfaceMethodBuilder = MethodSpec.methodBuilder(methodName)
                                                                 .addModifiers(Modifier.PUBLIC)
                                                                 .returns(TypeName.get(methodElement.getReturnType()))
@@ -164,6 +164,7 @@ public class BinderInterfaceProcessor extends AbstractProcessor
             }
             interfaceMethodBuilder.addStatement("$1T data = $1T.obtain()", TypeNameHelper.typeNameOfParcel());
             interfaceMethodBuilder.addStatement("$1T reply = $1T.obtain()", TypeNameHelper.typeNameOfParcel());
+            interfaceMethodBuilder.addStatement("data.writeString($S)", methodElement.getSimpleName().toString());
             interfaceMethodBuilder.beginControlFlow("try");
             boolean isNullFlagDefined = false;
             for (VariableElement parameterElement : methodElement.getParameters())
@@ -199,7 +200,7 @@ public class BinderInterfaceProcessor extends AbstractProcessor
                     }
                 }
             }
-            interfaceMethodBuilder.addStatement("$N.transact($N, data, reply, 0)", fieldSpecRemote, fieldSpecMethodId);
+            interfaceMethodBuilder.addStatement("$N.transact($N, data, reply, 0)", fieldSpecRemote, fieldSpecTransactionCode);
             interfaceMethodBuilder.addStatement("reply.readException()");
             if (methodElement.getReturnType().getKind() != TypeKind.VOID)
             {

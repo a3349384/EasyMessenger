@@ -102,6 +102,9 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
         mMessager.printMessage(Diagnostic.Kind.NOTE, "generate class: " + generatedClassName);
 
         FieldSpec fieldSpecInterfaceImpl = FieldSpec.builder(TypeName.get(typeElement.asType()), "mInterfaceImpl", Modifier.PRIVATE).build();
+        FieldSpec fieldSpecTransactionCode = FieldSpec.builder(int.class, "TRANSACTION_CODE", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+                .initializer("$T.FIRST_CALL_TRANSACTION + $L", TypeNameHelper.typeNameOfIBinder(), 1)
+                .build();
         ParameterSpec parameterSpecInterfaceImpl = ParameterSpec.builder(TypeName.get(typeElement.asType()), "interfaceImpl").build();
 
         MethodSpec methodSpecConstructor = MethodSpec.constructorBuilder()
@@ -111,10 +114,11 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
                                                    .build();
 
         TypeSpec.Builder typeImplBuilder = TypeSpec.classBuilder(generatedClassName)
-                                                   .addModifiers(Modifier.PUBLIC)
-                                                   .superclass(ClassName.get("android.os", "Binder"))
-                                                   .addField(fieldSpecInterfaceImpl)
-                                                   .addMethod(methodSpecConstructor);
+                .addModifiers(Modifier.PUBLIC)
+                .superclass(ClassName.get("android.os", "Binder"))
+                .addField(fieldSpecInterfaceImpl)
+                .addField(fieldSpecTransactionCode)
+                .addMethod(methodSpecConstructor);
 
         ParameterSpec onTransactMethodCodeParameter = ParameterSpec.builder(int.class, "code").build();
         ParameterSpec onTransactMethodDataParameter = ParameterSpec.builder(TypeNameHelper.typeNameOfParcel(), "data").build();
@@ -128,18 +132,17 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
                                                              .addParameter(onTransactMethodCodeParameter)
                                                              .addParameter(onTransactMethodDataParameter)
                                                              .addParameter(onTransactMethodReplyParameter)
-                                                             .addParameter(onTransactMethodFlagsParameter)
-                .beginControlFlow("switch($N)", onTransactMethodCodeParameter);
+                                                             .addParameter(onTransactMethodFlagsParameter);
+        onTransactMethodBuilder.beginControlFlow("if($N != $N)", onTransactMethodCodeParameter, fieldSpecTransactionCode);
+        onTransactMethodBuilder.addStatement("return super.onTransact($N, $N, $N, $N)", onTransactMethodCodeParameter,
+                onTransactMethodDataParameter, onTransactMethodReplyParameter, onTransactMethodFlagsParameter);
+        onTransactMethodBuilder.endControlFlow();
+        onTransactMethodBuilder.addStatement("String methodName = $N.readString()", onTransactMethodDataParameter);
+        onTransactMethodBuilder.beginControlFlow("switch($L)", "methodName");
         for (int i = 0; i < methodElements.size(); i++)
         {
             ExecutableElement methodElement = methodElements.get(i);
-            String methodName = methodElement.getSimpleName().toString();
-            FieldSpec fieldSpecMethodId = FieldSpec.builder(TypeName.INT, "TRANSACTION_" + methodName, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-                                                  .initializer("$T.FIRST_CALL_TRANSACTION + $L", TypeNameHelper.typeNameOfIBinder(), i + 1)
-                                                  .build();
-            typeImplBuilder.addField(fieldSpecMethodId);
-
-            onTransactMethodBuilder.beginControlFlow("case $N:", fieldSpecMethodId);
+            onTransactMethodBuilder.beginControlFlow("case $S:", methodElement.getSimpleName().toString());
             List<String> parameterNames = new ArrayList<>(methodElement.getParameters().size());
             boolean isNullFlagDefined = false;
             for (VariableElement parameterElement : methodElement.getParameters())
@@ -219,8 +222,7 @@ public class BinderInterfaceImplProcessor extends AbstractProcessor
             onTransactMethodBuilder.endControlFlow();
         }
         onTransactMethodBuilder.endControlFlow();
-        onTransactMethodBuilder.addStatement("return super.onTransact($N, $N, $N, $N)", onTransactMethodCodeParameter,
-                onTransactMethodDataParameter, onTransactMethodReplyParameter, onTransactMethodFlagsParameter);
+        onTransactMethodBuilder.addStatement("return false");
         typeImplBuilder.addMethod(onTransactMethodBuilder.build());
         return typeImplBuilder.build();
     }
