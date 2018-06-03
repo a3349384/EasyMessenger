@@ -7,5 +7,9 @@
         android:supportsRtl="true">
         <service android:name=".ServerService"
                  android:exported="true"/>
+        <provider
+            android:authorities="com.tech618.easymessengerserver.DispatcherProvider"
+            android:name=".DispatcherProvider"
+            android:exported="true"/>
     </application>
 </manifest>
