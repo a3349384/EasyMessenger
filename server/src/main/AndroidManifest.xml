@@ -4,12 +4,13 @@
     <application
         android:allowBackup="true"
         android:label="@string/app_name"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:name=".TheApplication">
         <service android:name=".ServerService"
                  android:exported="true"/>
         <provider
-            android:authorities="com.tech618.easymessengerserver.DispatcherProvider"
-            android:name=".DispatcherProvider"
+            android:authorities="com.tech618.easymessengerserver.BinderProvider"
+            android:name=".BinderProvider"
             android:exported="true"/>
     </application>
 </manifest>

@@ -24,32 +24,24 @@
  */
 package com.tech618.easymessengerserver;
 
+import android.annotation.TargetApi;
+import android.database.AbstractCursor;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by wangallen on 2018/3/20.
  */
+@TargetApi(18)
+public class BinderCursor extends AbstractCursor {
 
-public class DispatcherCursor extends MatrixCursor {
-
-    public static final String KEY_BINDER_WRAPPER = "KeyBinderWrapper";
-
-    private static Map<String, DispatcherCursor> cursorCache = new ConcurrentHashMap<>();
-
-    public static final String[] DEFAULT_COLUMNS = {"col"};
+    public static final String KEY_BINDER = "binder";
 
     private Bundle binderExtras = new Bundle();
 
-    public DispatcherCursor(String[] columnNames, IBinder binder) {
-        super(columnNames);
-        binderExtras.putBinder(KEY_BINDER_WRAPPER, binder);
+    public BinderCursor(IBinder binder) {
+        binderExtras.putBinder(KEY_BINDER, binder);
     }
 
     @Override
@@ -57,18 +49,48 @@ public class DispatcherCursor extends MatrixCursor {
         return binderExtras;
     }
 
-    public static DispatcherCursor generateCursor(IBinder binder) {
-        return new DispatcherCursor(DEFAULT_COLUMNS, binder);
+    @Override
+    public int getCount() {
+        return 1;
     }
 
-    public static IBinder stripBinder(Cursor cursor) {
-        if (null == cursor) {
-            return null;
-        }
-        Bundle bundle = cursor.getExtras();
-        bundle.setClassLoader(BinderWrapper.class.getClassLoader());
-        BinderWrapper binderWrapper = bundle.getParcelable(KEY_BINDER_WRAPPER);
-        return null != binderWrapper ? binderWrapper.getBinder() : null;
+    @Override
+    public String[] getColumnNames() {
+        return new String[]{KEY_BINDER};
     }
 
+    @Override
+    public String getString(int column) {
+        return null;
+    }
+
+    @Override
+    public short getShort(int column) {
+        return 0;
+    }
+
+    @Override
+    public int getInt(int column) {
+        return 0;
+    }
+
+    @Override
+    public long getLong(int column) {
+        return 0;
+    }
+
+    @Override
+    public float getFloat(int column) {
+        return 0;
+    }
+
+    @Override
+    public double getDouble(int column) {
+        return 0;
+    }
+
+    @Override
+    public boolean isNull(int column) {
+        return false;
+    }
 }

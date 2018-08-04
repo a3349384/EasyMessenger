@@ -33,7 +33,7 @@ public class TestSyncActivity extends AppCompatActivity{
                     cursor = TestSyncActivity.this.getContentResolver().query(getDispatcherProviderUri(), PROJECTION_MAIN,
                             null, null, null);
                     if (cursor != null) {
-                        IBinder binder = cursor.getExtras().getBinder("KeyBinderWrapper");
+                        IBinder binder = cursor.getExtras().getBinder("binder");
                         if (binder != null)
                         {
                             binder.transact(Binder.FIRST_CALL_TRANSACTION + 1, Parcel.obtain(), Parcel.obtain(), 0);
@@ -52,6 +52,6 @@ public class TestSyncActivity extends AppCompatActivity{
     }
 
     private Uri getDispatcherProviderUri() {
-        return Uri.parse("content://com.tech618.easymessengerserver.DispatcherProvider/main");
+        return Uri.parse("content://com.tech618.easymessengerserver.BinderProvider/main");
     }
 }
