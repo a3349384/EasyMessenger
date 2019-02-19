@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.tech618.easymessenger.IntCallback;
+import com.tech618.easymessenger.VoidCallback;
 import com.tech618.easymessengerclientservercommon.Color;
 import com.tech618.easymessengerclientservercommon.User;
 
@@ -122,11 +123,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void voidTest()
     {
-        try {
-            ITestFunctionTestHelper.instance.voidTest();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        ITestFunctionHelper.instance.voidTestAsync(new VoidCallback()
+        {
+            @Override
+            public void onSuccess()
+            {
+                Toast.makeText(MainActivity.this, "void success", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Exception ex)
+            {
+
+            }
+        });
     }
 
     private void intTest()

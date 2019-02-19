@@ -18,16 +18,6 @@ android {
     }
 }
 
-repositories {
-    maven {
-        url 'http://192.168.1.155:8081/repository/android_comm/'
-        credentials {
-            username 'zmy'
-            password '111111'
-        }
-    }
-}
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'

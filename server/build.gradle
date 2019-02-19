@@ -20,16 +20,6 @@ android {
 
 }
 
-repositories {
-    maven {
-        url 'http://192.168.1.155:8081/repository/gened.ipc.library/'
-        credentials {
-            username 'zmy'
-            password '111111'
-        }
-    }
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     annotationProcessor project(':compiler')
