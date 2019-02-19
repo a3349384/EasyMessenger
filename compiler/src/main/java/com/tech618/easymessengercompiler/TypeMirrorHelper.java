@@ -1,8 +1,5 @@
 package com.tech618.easymessengercompiler;
 
-import java.util.List;
-
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 /**
@@ -140,5 +137,24 @@ public class TypeMirrorHelper
     {
         String className = typeMirror.toString();
         return className.contentEquals(String.class.getCanonicalName());
+    }
+
+    public static boolean isParcelable(TypeMirror typeMirror)
+    {
+        String parcelableClassName = TypeNameHelper.typeNameOfParcelable().toString();
+        return Global.types.isSubtype(typeMirror, Global.elements.getTypeElement(parcelableClassName).asType());
+    }
+
+    public static boolean isSerializable(TypeMirror typeMirror)
+    {
+        String serializableClassName = TypeNameHelper.typeNameOfSerializable().toString();
+        return Global.types.isSubtype(typeMirror, Global.elements.getTypeElement(serializableClassName).asType());
+    }
+
+    public static boolean isList(TypeMirror typeMirror)
+    {
+        String listClassName = TypeNameHelper.typeNameOfList().toString();
+        return Global.types.isSubtype(Global.types.erasure(typeMirror),
+                Global.types.erasure(Global.elements.getTypeElement(listClassName).asType()));
     }
 }

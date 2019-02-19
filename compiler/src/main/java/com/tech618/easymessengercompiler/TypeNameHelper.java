@@ -53,4 +53,14 @@ public class TypeNameHelper
     {
         return ClassName.bestGuess("android.content.IntentFilter");
     }
+
+    public static TypeName typeNameOfSerializable()
+    {
+        return ClassName.get("java.io", "Serializable");
+    }
+
+    public static TypeName typeNameOfList()
+    {
+        return ClassName.get("java.util", "List");
+    }
 }

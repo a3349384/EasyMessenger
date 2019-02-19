@@ -1,8 +1,12 @@
 apply plugin: 'java-library'
 apply from: 'maven.gradle'
 
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

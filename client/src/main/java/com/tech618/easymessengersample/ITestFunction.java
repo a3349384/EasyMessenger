@@ -14,15 +14,21 @@ public interface ITestFunction
 {
     void voidTest();
 
-    int intTest(int num1, int num2);
-
     byte byteTest(byte b1, byte b2);
+
+    char charTest(char c1, char c2);
+
+    boolean booleanTest(boolean b);
+
+    short shortTest(short s1, short s2);
+
+    int intTest(int num1, int num2);
 
     long longTest(long l1, long l2);
 
     float floatTest(float f1, float f2);
 
-    boolean booleanTest(boolean b);
+    double doubleTest(double d1, double d2);
 
     String stringTest(String s1, String s2);
 
