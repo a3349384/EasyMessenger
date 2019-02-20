@@ -41,5 +41,19 @@ public interface ITestFunction
     Color enumTest(Color color);
 
     User nullTest(User user);
+
+    boolean[] booleanArrayTest(boolean[] array1, boolean[] array2);
+
+    byte[] byteArrayTest(byte[] array1, byte[] array2);
+
+    char[] charArrayTest(char[] array1, char[] array2);
+
+    int[] intArrayTest(int[] array1, int[] array2);
+
+    long[] longArrayTest(long[] array1, long[] array2);
+
+    float[] floatArrayTest(float[] array1, float[] array2);
+
+    double[] doubleArrayTest(double[] array1, double[] array2);
 }
 

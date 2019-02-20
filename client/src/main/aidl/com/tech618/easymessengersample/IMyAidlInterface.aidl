@@ -1,5 +1,6 @@
 // IMyAidlInterface.aidl
 package com.tech618.easymessengersample;
+import com.tech618.easymessengersample.Book;
 
 // Declare any non-default types here with import statements
 
@@ -17,4 +18,7 @@ interface IMyAidlInterface {
 
     boolean boolTest(boolean b);
 //    List<int> listTest(in List<int> list);
+
+//    Book testBook(out Book book);
+    int[] intArrayTest(inout int[] array1, inout int[] array2);
 }

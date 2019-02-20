@@ -10,11 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.tech618.easymessenger.ResultCallBack;
 import com.tech618.easymessenger.VoidCallback;
 import com.tech618.easymessengerclientservercommon.Color;
 import com.tech618.easymessengerclientservercommon.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
@@ -43,7 +45,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewEnumTest).setOnClickListener(this);
         findViewById(R.id.viewNullTest).setOnClickListener(this);
         findViewById(R.id.broadcastTest).setOnClickListener(this);
-
+        findViewById(R.id.booleanArrayTest).setOnClickListener(this);
+        findViewById(R.id.byteArrayTest).setOnClickListener(this);
+        findViewById(R.id.charArrayTest).setOnClickListener(this);
+        findViewById(R.id.intArrayTest).setOnClickListener(this);
+        findViewById(R.id.longArrayTest).setOnClickListener(this);
+        findViewById(R.id.floatArrayTest).setOnClickListener(this);
+        findViewById(R.id.doubleArrayTest).setOnClickListener(this);
         ITestFunctionHelper.instance.__init(this, getServiceComponentName());
         IBroadcastMessageHelper.instance.__init(this);
         BroadcastReceiverHelper.instance.__init(this.getApplicationContext());
@@ -130,9 +138,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 nullTest();
                 break;
             }
-            case R.id.broadcastTest:
+            case R.id.booleanArrayTest:
             {
-                broadcastTest();
+                boolArrayTest();
+                break;
+            }
+            case R.id.byteArrayTest:
+            {
+                byteArrayTest();
+                break;
+            }
+            case R.id.charArrayTest:
+            {
+                charArrayTest();
+                break;
+            }
+            case R.id.intArrayTest:
+            {
+                intArrayTest();
+                break;
+            }
+            case R.id.floatArrayTest:
+            {
+                floatArrayTest();
+                break;
+            }
+            case R.id.longArrayTest:
+            {
+                longArrayTest();
+                break;
+            }
+            case R.id.doubleArrayTest:
+            {
+                doubleArrayTest();
                 break;
             }
         }
@@ -535,6 +573,132 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void broadcastTest()
     {
         IBroadcastMessageHelper.instance.test();
+    }
+
+    private void boolArrayTest()
+    {
+        ITestFunctionHelper.instance.booleanArrayTestAsync(new boolean[]{false}, new boolean[]{true}, new ResultCallBack<boolean[]>()
+        {
+            @Override
+            public void onSuccess(boolean[] result)
+            {
+                log(Arrays.toString(result));
+            }
+
+            @Override
+            public void onError(Exception ex)
+            {
+
+            }
+        });
+    }
+
+    private void byteArrayTest()
+    {
+        ITestFunctionHelper.instance.byteArrayTestAsync(new byte[]{(byte)1}, new byte[]{(byte) 2}, new ResultCallBack<byte[]>()
+        {
+            @Override
+            public void onSuccess(byte[] result)
+            {
+                log(Arrays.toString(result));
+            }
+
+            @Override
+            public void onError(Exception ex)
+            {
+
+            }
+        });
+    }
+
+    private void charArrayTest()
+    {
+        ITestFunctionHelper.instance.charArrayTestAsync(new char[]{'a'}, new char[]{'b'}, new ResultCallBack<char[]>()
+        {
+            @Override
+            public void onSuccess(char[] result)
+            {
+                log(Arrays.toString(result));
+            }
+
+            @Override
+            public void onError(Exception ex)
+            {
+
+            }
+        });
+    }
+
+    private void intArrayTest()
+    {
+        ITestFunctionHelper.instance.intArrayTestAsync(new int[]{1}, new int[]{2}, new ResultCallBack<int[]>()
+        {
+            @Override
+            public void onSuccess(int[] result)
+            {
+                log(Arrays.toString(result));
+            }
+
+            @Override
+            public void onError(Exception ex)
+            {
+
+            }
+        });
+    }
+
+    private void longArrayTest()
+    {
+        ITestFunctionHelper.instance.longArrayTestAsync(new long[]{1}, new long[]{2}, new ResultCallBack<long[]>()
+        {
+            @Override
+            public void onSuccess(long[] result)
+            {
+                log(Arrays.toString(result));
+            }
+
+            @Override
+            public void onError(Exception ex)
+            {
+
+            }
+        });
+    }
+
+    private void floatArrayTest()
+    {
+        ITestFunctionHelper.instance.floatArrayTestAsync(new float[]{1}, new float[]{2}, new ResultCallBack<float[]>()
+        {
+            @Override
+            public void onSuccess(float[] result)
+            {
+                log(Arrays.toString(result));
+            }
+
+            @Override
+            public void onError(Exception ex)
+            {
+
+            }
+        });
+    }
+
+    private void doubleArrayTest()
+    {
+        ITestFunctionHelper.instance.doubleArrayTestAsync(new double[]{1}, new double[]{2}, new ResultCallBack<double[]>()
+        {
+            @Override
+            public void onSuccess(double[] result)
+            {
+                log(Arrays.toString(result));
+            }
+
+            @Override
+            public void onError(Exception ex)
+            {
+
+            }
+        });
     }
 
     private Intent getServiceIntent()

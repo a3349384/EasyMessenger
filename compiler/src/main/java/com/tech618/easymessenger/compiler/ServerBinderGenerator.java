@@ -14,6 +14,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
@@ -146,6 +147,53 @@ public class ServerBinderGenerator
             }
             //endregion
 
+            //region 数组
+            case ARRAY:
+            {
+                ArrayType arrayType = (ArrayType)parameterTypeMirror;
+                TypeKind arrayComponentTypeKind = arrayType.getComponentType().getKind();
+                switch (arrayComponentTypeKind)
+                {
+                    case BOOLEAN:
+                    {
+                        methodBuilder.addStatement("$T $N = data.createBooleanArray()", parameterTypeMirror, parameterName);
+                        break;
+                    }
+                    case BYTE:
+                    {
+                        methodBuilder.addStatement("$T $N = data.createByteArray()", parameterTypeMirror, parameterName);
+                        break;
+                    }
+                    case CHAR:
+                    {
+                        methodBuilder.addStatement("$T $N = data.createCharArray()", parameterTypeMirror, parameterName);
+                        break;
+                    }
+                    case INT:
+                    {
+                        methodBuilder.addStatement("$T $N = data.createIntArray()", parameterTypeMirror, parameterName);
+                        break;
+                    }
+                    case LONG:
+                    {
+                        methodBuilder.addStatement("$T $N = data.createLongArray()", parameterTypeMirror, parameterName);
+                        break;
+                    }
+                    case FLOAT:
+                    {
+                        methodBuilder.addStatement("$T $N = data.createFloatArray()", parameterTypeMirror, parameterName);
+                        break;
+                    }
+                    case DOUBLE:
+                    {
+                        methodBuilder.addStatement("$T $N = data.createDoubleArray()", parameterTypeMirror, parameterName);
+                        break;
+                    }
+                }
+                return;
+            }
+            //endregion
+
             //region 引用类型
             default:
             {
@@ -224,6 +272,53 @@ public class ServerBinderGenerator
             case DOUBLE:
             {
                 methodBuilder.addStatement("reply.writeDouble(__result)");
+                return;
+            }
+            //endregion
+
+            //region 数组
+            case ARRAY:
+            {
+                ArrayType arrayType = (ArrayType)methodReturnTypeMirror;
+                TypeKind arrayComponentTypeKind = arrayType.getComponentType().getKind();
+                switch (arrayComponentTypeKind)
+                {
+                    case BOOLEAN:
+                    {
+                        methodBuilder.addStatement("reply.writeBooleanArray(__result)");
+                        break;
+                    }
+                    case BYTE:
+                    {
+                        methodBuilder.addStatement("reply.writeByteArray(__result)");
+                        break;
+                    }
+                    case CHAR:
+                    {
+                        methodBuilder.addStatement("reply.writeCharArray(__result)");
+                        break;
+                    }
+                    case INT:
+                    {
+                        methodBuilder.addStatement("reply.writeIntArray(__result)");
+                        break;
+                    }
+                    case LONG:
+                    {
+                        methodBuilder.addStatement("reply.writeLongArray(__result)");
+                        break;
+                    }
+                    case FLOAT:
+                    {
+                        methodBuilder.addStatement("reply.writeFloatArray(__result)");
+                        break;
+                    }
+                    case DOUBLE:
+                    {
+                        methodBuilder.addStatement("reply.writeDoubleArray(__result)");
+                        break;
+                    }
+                }
                 return;
             }
             //endregion

@@ -13,9 +13,9 @@ import java.util.List;
  * Created by zmy on 2018/4/6.
  */
 @BinderServer
-public class CalculatorServerImpl
+public class TestFunctionImpl
 {
-    public static final String TAG = "CalculatorServerImpl";
+    public static final String TAG = "TestFunctionImpl";
 
     public void voidTest()
     {
@@ -104,6 +104,41 @@ public class CalculatorServerImpl
             user1.setAge(user.getAge());
             return user1;
         }
+    }
+
+    public boolean[] booleanArrayTest(boolean[] array1, boolean[] array2)
+    {
+        return new boolean[]{array1[0], array2[0]};
+    }
+
+    public byte[] byteArrayTest(byte[] array1, byte[] array2)
+    {
+        return new byte[]{array1[0], array2[0]};
+    }
+
+    public char[] charArrayTest(char[] array1, char[] array2)
+    {
+        return new char[]{array1[0], array2[0]};
+    }
+
+    public int[] intArrayTest(int[] array1, int[] array2)
+    {
+        return new int[]{array1[0], array2[0]};
+    }
+
+    public long[] longArrayTest(long[] array1, long[] array2)
+    {
+        return new long[]{array1[0], array2[0]};
+    }
+
+    public float[] floatArrayTest(float[] array1, float[] array2)
+    {
+        return new float[]{array1[0], array2[0]};
+    }
+
+    public double[] doubleArrayTest(double[] array1, double[] array2)
+    {
+        return new double[]{array1[0], array2[0]};
     }
 
     private void privateTest()

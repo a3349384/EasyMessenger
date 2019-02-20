@@ -16,6 +16,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
@@ -116,6 +117,11 @@ public class ClientClientGenerator
         switch (paratemerTypeKind)
         {
             //region 值类型
+            case BOOLEAN:
+            {
+                clientMethodBuilder.addStatement("data.writeInt($N ? 1 : 0)", parameterName);
+                return;
+            }
             case BYTE:
             {
                 clientMethodBuilder.addStatement("data.writeByte($N)", parameterName);
@@ -126,11 +132,6 @@ public class ClientClientGenerator
             case INT:
             {
                 clientMethodBuilder.addStatement("data.writeInt($N)", parameterName);
-                return;
-            }
-            case BOOLEAN:
-            {
-                clientMethodBuilder.addStatement("data.writeInt($N ? 1 : 0)", parameterName);
                 return;
             }
             case LONG:
@@ -146,6 +147,53 @@ public class ClientClientGenerator
             case DOUBLE:
             {
                 clientMethodBuilder.addStatement("data.writeDouble($N)", parameterName);
+                return;
+            }
+            //endregion
+
+            //region 数组
+            case ARRAY:
+            {
+                ArrayType arrayType = (ArrayType)parameterElement.asType();
+                TypeKind arrayComponentTypeKind = arrayType.getComponentType().getKind();
+                switch (arrayComponentTypeKind)
+                {
+                    case BOOLEAN:
+                    {
+                        clientMethodBuilder.addStatement("data.writeBooleanArray($N)", parameterName);
+                        break;
+                    }
+                    case BYTE:
+                    {
+                        clientMethodBuilder.addStatement("data.writeByteArray($N)", parameterName);
+                        break;
+                    }
+                    case CHAR:
+                    {
+                        clientMethodBuilder.addStatement("data.writeCharArray($N)", parameterName);
+                        break;
+                    }
+                    case INT:
+                    {
+                        clientMethodBuilder.addStatement("data.writeIntArray($N)", parameterName);
+                        break;
+                    }
+                    case LONG:
+                    {
+                        clientMethodBuilder.addStatement("data.writeLongArray($N)", parameterName);
+                        break;
+                    }
+                    case FLOAT:
+                    {
+                        clientMethodBuilder.addStatement("data.writeFloatArray($N)", parameterName);
+                        break;
+                    }
+                    case DOUBLE:
+                    {
+                        clientMethodBuilder.addStatement("data.writeDoubleArray($N)", parameterName);
+                        break;
+                    }
+                }
                 return;
             }
             //endregion
@@ -227,6 +275,53 @@ public class ClientClientGenerator
             case DOUBLE:
             {
                 clientMethodBuilder.addStatement("return reply.readDouble()");
+                return;
+            }
+            //endregion
+
+            //region 数组
+            case ARRAY:
+            {
+                ArrayType arrayType = (ArrayType)returnType;
+                TypeKind arrayComponentTypeKind = arrayType.getComponentType().getKind();
+                switch (arrayComponentTypeKind)
+                {
+                    case BOOLEAN:
+                    {
+                        clientMethodBuilder.addStatement("return reply.createBooleanArray()");
+                        break;
+                    }
+                    case BYTE:
+                    {
+                        clientMethodBuilder.addStatement("return reply.createByteArray()");
+                        break;
+                    }
+                    case CHAR:
+                    {
+                        clientMethodBuilder.addStatement("return reply.createCharArray()");
+                        break;
+                    }
+                    case INT:
+                    {
+                        clientMethodBuilder.addStatement("return reply.createIntArray()");
+                        break;
+                    }
+                    case LONG:
+                    {
+                        clientMethodBuilder.addStatement("return reply.createLongArray()");
+                        break;
+                    }
+                    case FLOAT:
+                    {
+                        clientMethodBuilder.addStatement("return reply.createFloatArray()");
+                        break;
+                    }
+                    case DOUBLE:
+                    {
+                        clientMethodBuilder.addStatement("return reply.createDoubleArray()");
+                        break;
+                    }
+                }
                 return;
             }
             //endregion
