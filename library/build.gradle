@@ -1,5 +1,4 @@
 apply plugin: 'java-library'
-apply from: 'maven.gradle'
 
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7

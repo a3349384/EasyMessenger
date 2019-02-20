@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
 
     defaultConfig {
-        applicationId "com.tech618.easymessengerserver"
+        applicationId "cn.zmy.easymessenger.server"
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 1
@@ -23,7 +23,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     annotationProcessor project(':compiler')
-//    implementation 'com.tech618:gened-ipc-library:1.0.0'
     implementation project(':client-server-common')
     implementation project(':library')
 }

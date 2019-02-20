@@ -1,5 +1,4 @@
 apply plugin: 'java-library'
-apply from: 'maven.gradle'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -11,6 +10,5 @@ tasks.withType(JavaCompile) {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.squareup:javapoet:1.10.0'
-//    implementation 'com.tech618:ipc-library:1.0.3'
     implementation project(':library')
 }

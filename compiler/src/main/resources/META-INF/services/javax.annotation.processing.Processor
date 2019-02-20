@@ -1,4 +1,4 @@
-com.tech618.easymessenger.compiler.BinderClientProcessor
-com.tech618.easymessenger.compiler.BinderServerProcessor
-com.tech618.easymessenger.compiler.BroadcastInterfaceProcessor
-com.tech618.easymessenger.compiler.BroadcastReceiverProcessor
+cn.zmy.easymessenger.compiler.BinderClientProcessor
+cn.zmy.easymessenger.compiler.BinderServerProcessor
+cn.zmy.easymessenger.compiler.BroadcastInterfaceProcessor
+cn.zmy.easymessenger.compiler.BroadcastReceiverProcessor
