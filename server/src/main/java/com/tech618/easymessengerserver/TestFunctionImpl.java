@@ -69,11 +69,7 @@ public class TestFunctionImpl
 
     public User parcelableTest(User user)
     {
-        User user1 = new User();
-        user1.setName(user.getName());
-        user1.setAge(user.getAge());
-
-        return user1;
+        return new User("server:" + user.getName(), user.getAge());
     }
 
     public List<Integer> primitiveListTest(List<Integer> list)
@@ -139,6 +135,11 @@ public class TestFunctionImpl
     public double[] doubleArrayTest(double[] array1, double[] array2)
     {
         return new double[]{array1[0], array2[0]};
+    }
+
+    public User[] parcelableArrayTest(User[] array1, User[] array2)
+    {
+        return new User[]{array1[0], array2[0]};
     }
 
     private void privateTest()

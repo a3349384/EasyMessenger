@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.longArrayTest).setOnClickListener(this);
         findViewById(R.id.floatArrayTest).setOnClickListener(this);
         findViewById(R.id.doubleArrayTest).setOnClickListener(this);
+        findViewById(R.id.parcelableArrayTest).setOnClickListener(this);
+
         ITestFunctionHelper.instance.__init(this, getServiceComponentName());
         IBroadcastMessageHelper.instance.__init(this);
         BroadcastReceiverHelper.instance.__init(this.getApplicationContext());
@@ -171,6 +173,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.doubleArrayTest:
             {
                 doubleArrayTest();
+                break;
+            }
+            case R.id.parcelableArrayTest:
+            {
+                parcelableArrayTest();
                 break;
             }
         }
@@ -689,6 +696,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             @Override
             public void onSuccess(double[] result)
+            {
+                log(Arrays.toString(result));
+            }
+
+            @Override
+            public void onError(Exception ex)
+            {
+
+            }
+        });
+    }
+
+    private void parcelableArrayTest()
+    {
+        User[] users1 = new User[]{new User("张三", 20)};
+        User[] users2 = new User[]{new User("李四", 30)};
+        ITestFunctionHelper.instance.parcelableArrayTestAsync(users1, users2, new ResultCallBack<User[]>()
+        {
+            @Override
+            public void onSuccess(User[] result)
             {
                 log(Arrays.toString(result));
             }

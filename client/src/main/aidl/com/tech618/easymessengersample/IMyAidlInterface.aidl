@@ -21,4 +21,6 @@ interface IMyAidlInterface {
 
 //    Book testBook(out Book book);
     int[] intArrayTest(inout int[] array1, inout int[] array2);
+
+    Book[] parcelableArrayTest(inout Book[] array1, inout Book[] array2);
 }

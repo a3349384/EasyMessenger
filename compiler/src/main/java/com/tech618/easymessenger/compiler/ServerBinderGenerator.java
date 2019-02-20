@@ -151,7 +151,8 @@ public class ServerBinderGenerator
             case ARRAY:
             {
                 ArrayType arrayType = (ArrayType)parameterTypeMirror;
-                TypeKind arrayComponentTypeKind = arrayType.getComponentType().getKind();
+                TypeMirror arrayComponenetTypeMirror = arrayType.getComponentType();
+                TypeKind arrayComponentTypeKind = arrayComponenetTypeMirror.getKind();
                 switch (arrayComponentTypeKind)
                 {
                     case BOOLEAN:
@@ -187,6 +188,17 @@ public class ServerBinderGenerator
                     case DOUBLE:
                     {
                         methodBuilder.addStatement("$T $N = data.createDoubleArray()", parameterTypeMirror, parameterName);
+                        break;
+                    }
+                    default:
+                    {
+                        //Parcelable array
+                        if (TypeMirrorHelper.isParcelable(arrayComponenetTypeMirror))
+                        {
+                            methodBuilder.addStatement("$T $N = data.createTypedArray($T.CREATOR)",
+                                    parameterTypeMirror, parameterName, arrayComponenetTypeMirror);
+                            break;
+                        }
                         break;
                     }
                 }
@@ -280,7 +292,8 @@ public class ServerBinderGenerator
             case ARRAY:
             {
                 ArrayType arrayType = (ArrayType)methodReturnTypeMirror;
-                TypeKind arrayComponentTypeKind = arrayType.getComponentType().getKind();
+                TypeMirror arrayComponenetTypeMirror = arrayType.getComponentType();
+                TypeKind arrayComponentTypeKind = arrayComponenetTypeMirror.getKind();
                 switch (arrayComponentTypeKind)
                 {
                     case BOOLEAN:
@@ -318,6 +331,16 @@ public class ServerBinderGenerator
                         methodBuilder.addStatement("reply.writeDoubleArray(__result)");
                         break;
                     }
+                    default:
+                    {
+                        //Parcelable array
+                        if (TypeMirrorHelper.isParcelable(arrayComponenetTypeMirror))
+                        {
+                            methodBuilder.addStatement("reply.writeTypedArray(__result, 0)");
+                            break;
+                        }
+                        break;
+                    }
                 }
                 return;
             }
@@ -337,8 +360,7 @@ public class ServerBinderGenerator
                 {
                     methodBuilder.addStatement("reply.writeInt(__result == null ? 0 : 1)");
                     methodBuilder.beginControlFlow("if (__result != null)");
-                    methodBuilder.addStatement("__result.writeToParcel(reply, $T.PARCELABLE_WRITE_RETURN_VALUE)",
-                            TypeNameHelper.typeNameOfParcelable());
+                    methodBuilder.addStatement("__result.writeToParcel(reply, 0)");
                     methodBuilder.endControlFlow();
                     return;
                 }

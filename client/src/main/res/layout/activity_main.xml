@@ -124,5 +124,10 @@
                 android:text="double array test"
                 android:textAllCaps="false"
                 android:id="@+id/doubleArrayTest"/>
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="parcelable array test"
+                android:textAllCaps="false"
+                android:id="@+id/parcelableArrayTest"/>
     </LinearLayout>
 </ScrollView>

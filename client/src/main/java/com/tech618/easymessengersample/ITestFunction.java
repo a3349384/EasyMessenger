@@ -55,5 +55,7 @@ public interface ITestFunction
     float[] floatArrayTest(float[] array1, float[] array2);
 
     double[] doubleArrayTest(double[] array1, double[] array2);
+
+    User[] parcelableArrayTest(User[] array1, User[] array2);
 }
 

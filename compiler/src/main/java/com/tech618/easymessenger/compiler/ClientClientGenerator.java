@@ -155,7 +155,8 @@ public class ClientClientGenerator
             case ARRAY:
             {
                 ArrayType arrayType = (ArrayType)parameterElement.asType();
-                TypeKind arrayComponentTypeKind = arrayType.getComponentType().getKind();
+                TypeMirror arrayComponenetTypeMirror = arrayType.getComponentType();
+                TypeKind arrayComponentTypeKind = arrayComponenetTypeMirror.getKind();
                 switch (arrayComponentTypeKind)
                 {
                     case BOOLEAN:
@@ -191,6 +192,16 @@ public class ClientClientGenerator
                     case DOUBLE:
                     {
                         clientMethodBuilder.addStatement("data.writeDoubleArray($N)", parameterName);
+                        break;
+                    }
+                    default:
+                    {
+                        //Parcelable array
+                        if (TypeMirrorHelper.isParcelable(arrayComponenetTypeMirror))
+                        {
+                            clientMethodBuilder.addStatement("data.writeTypedArray($N, 0)", parameterName);
+                            break;
+                        }
                         break;
                     }
                 }
@@ -283,7 +294,8 @@ public class ClientClientGenerator
             case ARRAY:
             {
                 ArrayType arrayType = (ArrayType)returnType;
-                TypeKind arrayComponentTypeKind = arrayType.getComponentType().getKind();
+                TypeMirror arrayComponenetTypeMirror = arrayType.getComponentType();
+                TypeKind arrayComponentTypeKind = arrayComponenetTypeMirror.getKind();
                 switch (arrayComponentTypeKind)
                 {
                     case BOOLEAN:
@@ -319,6 +331,17 @@ public class ClientClientGenerator
                     case DOUBLE:
                     {
                         clientMethodBuilder.addStatement("return reply.createDoubleArray()");
+                        break;
+                    }
+                    default:
+                    {
+                        //Parcelable array
+                        if (TypeMirrorHelper.isParcelable(arrayComponenetTypeMirror))
+                        {
+                            clientMethodBuilder.addStatement("return reply.createTypedArray($T.CREATOR)",
+                                    arrayComponenetTypeMirror);
+                            break;
+                        }
                         break;
                     }
                 }
