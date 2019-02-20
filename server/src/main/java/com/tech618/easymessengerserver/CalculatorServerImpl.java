@@ -2,7 +2,7 @@ package com.tech618.easymessengerserver;
 
 import android.util.Log;
 
-import com.tech618.easymessenger.BinderInterfaceImpl;
+import com.tech618.easymessenger.BinderServer;
 import com.tech618.easymessengerclientservercommon.Color;
 import com.tech618.easymessengerclientservercommon.User;
 
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by zmy on 2018/4/6.
  */
-@BinderInterfaceImpl
+@BinderServer
 public class CalculatorServerImpl
 {
     public static final String TAG = "CalculatorServerImpl";

@@ -1,6 +1,6 @@
 package com.tech618.easymessengersample;
 
-import com.tech618.easymessenger.BinderInterface;
+import com.tech618.easymessenger.BinderClient;
 import com.tech618.easymessengerclientservercommon.Color;
 import com.tech618.easymessengerclientservercommon.User;
 
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by zmy on 2018/4/7.
  */
-@BinderInterface
+@BinderClient
 public interface ITestFunction
 {
     void voidTest();

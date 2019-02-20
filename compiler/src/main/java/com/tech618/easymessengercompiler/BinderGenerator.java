@@ -16,7 +16,6 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
 
 /**
  * Created by zmy on 2019/2/19.
@@ -25,17 +24,17 @@ import javax.tools.Diagnostic;
 
 public class BinderGenerator
 {
-    public static TypeSpec generateBinder(TypeElement typeElement, List<ExecutableElement> methodElements)
+    public static TypeSpec generateBinder(TypeElement binderServerTypeElement, List<ExecutableElement> methodElements)
     {
-        String generatedClassName = typeElement.getSimpleName().toString() + "Binder";
-        Global.messager.printMessage(Diagnostic.Kind.NOTE, "generate class: " + generatedClassName);
+        String generatedClassName = binderServerTypeElement.getSimpleName().toString() + "Binder";
+        TypeMirror binderServerTypeMirror = binderServerTypeElement.asType();
         //生成全局属性
-        FieldSpec fieldSpecInterfaceImpl = FieldSpec.builder(TypeName.get(typeElement.asType()), "mInterfaceImpl", Modifier.PRIVATE).build();
+        FieldSpec fieldSpecInterfaceImpl = FieldSpec.builder(TypeName.get(binderServerTypeMirror), "mInterfaceImpl", Modifier.PRIVATE).build();
         FieldSpec fieldSpecTransactionCode = FieldSpec.builder(int.class, "TRANSACTION_CODE", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
                                                      .initializer("$T.FIRST_CALL_TRANSACTION + $L", TypeNameHelper.typeNameOfIBinder(), 1)
                                                      .build();
         //生成构造函数
-        ParameterSpec parameterSpecInterfaceImpl = ParameterSpec.builder(TypeName.get(typeElement.asType()), "interfaceImpl").build();
+        ParameterSpec parameterSpecInterfaceImpl = ParameterSpec.builder(TypeName.get(binderServerTypeMirror), "interfaceImpl").build();
         MethodSpec methodSpecConstructor = MethodSpec.constructorBuilder()
                                                    .addModifiers(Modifier.PUBLIC)
                                                    .addParameter(parameterSpecInterfaceImpl)
