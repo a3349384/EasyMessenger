@@ -1,4 +1,4 @@
-package com.tech618.easymessengercompiler;
+package com.tech618.easymessenger.compiler;
 
 import javax.lang.model.type.TypeMirror;
 

@@ -1,4 +1,4 @@
-package com.tech618.easymessengercompiler;
+package com.tech618.easymessenger.compiler;
 
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
@@ -22,7 +22,7 @@ import javax.lang.model.type.TypeMirror;
  * 生成IPC通信的Binder类
  */
 
-public class BinderGenerator
+public class ServerBinderGenerator
 {
     public static TypeSpec generateBinder(TypeElement binderServerTypeElement, List<ExecutableElement> methodElements)
     {

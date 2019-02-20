@@ -1,4 +1,4 @@
-package com.tech618.easymessengercompiler;
+package com.tech618.easymessenger.compiler;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
@@ -66,7 +66,7 @@ public class BinderServerProcessor extends AbstractProcessor
                 }
             }
             String packageName = Global.elements.getPackageOf(binderServerTypeElement).getQualifiedName().toString();
-            TypeSpec binderTypeSpec = BinderGenerator.generateBinder(binderServerTypeElement, binderServerMethodElements);
+            TypeSpec binderTypeSpec = ServerBinderGenerator.generateBinder(binderServerTypeElement, binderServerMethodElements);
             JavaFile javaFile = JavaFile.builder(packageName, binderTypeSpec).build();
             try
             {

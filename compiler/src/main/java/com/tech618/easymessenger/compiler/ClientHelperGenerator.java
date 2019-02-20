@@ -1,4 +1,4 @@
-package com.tech618.easymessengercompiler;
+package com.tech618.easymessenger.compiler;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
@@ -32,13 +32,13 @@ import javax.lang.model.type.TypeKind;
  * 生成IPC通信Helper类
  */
 
-public class HelperGenerator
+public class ClientHelperGenerator
 {
     public static TypeSpec generateHelper(TypeElement binderInterfaceTypeElement, List<ExecutableElement> binderInterfaceMethodElements)
     {
         String helperClassName = getHelperFullName(binderInterfaceTypeElement);
         TypeName helperName = ClassName.bestGuess(helperClassName);
-        TypeName clientName = ClassName.bestGuess(ClientGenerator.getClientFullName(binderInterfaceTypeElement));
+        TypeName clientName = ClassName.bestGuess(ClientClientGenerator.getClientFullName(binderInterfaceTypeElement));
 
         //单例
         FieldSpec instanceFiled = FieldSpec.builder(helperName, "instance", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)

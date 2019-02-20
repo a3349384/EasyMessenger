@@ -1,4 +1,4 @@
-package com.tech618.easymessengercompiler;
+package com.tech618.easymessenger.compiler;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
@@ -24,7 +24,7 @@ import javax.lang.model.type.TypeMirror;
  * 生成IPC通信Client类
  */
 
-public class ClientGenerator
+public class ClientClientGenerator
 {
     /**
      * 根据{@link BinderClient}的注解类，生成其IPC通信Client类。
