@@ -2,15 +2,21 @@ package com.tech618.easymessengersample;
 
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.tech618.easymessenger.BooleanCallback;
+import com.tech618.easymessenger.ByteCallback;
+import com.tech618.easymessenger.CharCallBack;
+import com.tech618.easymessenger.DoubleCallback;
+import com.tech618.easymessenger.FloatCallback;
+import com.tech618.easymessenger.IntCallback;
+import com.tech618.easymessenger.LongCallback;
 import com.tech618.easymessenger.ResultCallBack;
+import com.tech618.easymessenger.ShortCallback;
 import com.tech618.easymessenger.VoidCallback;
 import com.tech618.easymessengerclientservercommon.Color;
 import com.tech618.easymessengerclientservercommon.User;
@@ -203,378 +209,272 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void intTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        ITestFunctionHelper.instance.intTestAsync(1, 2, new IntCallback()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(int result)
             {
-                try
-                {
-                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClient.fromBinder(service).intTest(1, 2)));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(String.format("%d + %d = %d", 1, 2, result));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void byteTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        ITestFunctionHelper.instance.byteTestAsync((byte)1, (byte)2, new ByteCallback()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(byte result)
             {
-                try
-                {
-                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClient.fromBinder(service).byteTest((byte) 1, (byte) 2)));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(String.format("%d + %d = %d", 1, 2, result));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void charTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        ITestFunctionHelper.instance.charTestAsync('1', '2', new CharCallBack()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(char result)
             {
-                try
-                {
-                    log(String.format("%c + %c = %c", '1', '2',
-                            ITestFunctionClient.fromBinder(service).charTest('1', '2')));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(String.format("%c + %c = %c", '1', '2', result));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void shortTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        ITestFunctionHelper.instance.shortTestAsync((short) 1, (short) 2, new ShortCallback()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(short result)
             {
-                try
-                {
-                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClient.fromBinder(service).shortTest((short) 1, (short) 2)));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(String.format("%d + %d = %d", 1, 2, result));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void longTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        ITestFunctionHelper.instance.longTestAsync(1, 2, new LongCallback()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(long result)
             {
-                try
-                {
-                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClient.fromBinder(service).longTest(1, 2)));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(String.format("%d + %d = %d", 1, 2, result));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void floatTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        ITestFunctionHelper.instance.floatTestAsync(1, 2, new FloatCallback()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(float result)
             {
-                try
-                {
-                    log(String.format("%f + %f = %f", 1f, 2f, ITestFunctionClient.fromBinder(service).floatTest(1f, 2f)));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(String.format("%f + %f = %f", 1f, 2f, result));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void doubleTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        ITestFunctionHelper.instance.doubleTestAsync(1, 2, new DoubleCallback()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(double result)
             {
-                try
-                {
-                    log(String.format("%f + %f = %f", 1d, 2d, ITestFunctionClient.fromBinder(service).doubleTest(1d, 2d)));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(String.format("%f + %f = %f", 1d, 2d, result));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void booleanTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        ITestFunctionHelper.instance.booleanTestAsync(false, new BooleanCallback()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(boolean result)
             {
-                try
-                {
-                    log("" + ITestFunctionClient.fromBinder(service).booleanTest(false));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log("" + result);
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void stringTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        ITestFunctionHelper.instance.stringTestAsync("hello", "world", new ResultCallBack<String>()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(String result)
             {
-                try
-                {
-                    log(String.format("%s + %s = %s", "hello", "world", ITestFunctionClient.fromBinder(service).stringTest("hello", "world")));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(String.format("%s + %s = %s", "hello", "world", result));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void parcelableTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        User user = new User();
+        user.setName("Bob");
+        user.setAge(11);
+        ITestFunctionHelper.instance.parcelableTestAsync(user, new ResultCallBack<User>()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(User result)
             {
-                try
-                {
-                    User user = new User();
-                    user.setName("Bob");
-                    user.setAge(11);
-
-                    User user1 = ITestFunctionClient.fromBinder(service).parcelableTest(user);
-                    log(String.format("name = %s;age = %d", user1.getName(), user1.getAge()));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(String.format("name = %s;age = %d", result.getName(), result.getAge()));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void primitiveListTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        ITestFunctionHelper.instance.primitiveListTestAsync(list, new ResultCallBack<List<Integer>>()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(List<Integer> result)
             {
-                try
-                {
-                    List<Integer> list = new ArrayList<>();
-                    list.add(1);
-                    list.add(2);
-                    List<Integer> list1 = ITestFunctionClient.fromBinder(service).primitiveListTest(list);
-                    log(String.format("%s", list1.toString()));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(String.format("%s", result));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void typeListTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        List<User> list = new ArrayList<>();
+        User user1 = new User();
+        user1.setName("Alice");
+        user1.setAge(12);
+        list.add(user1);
+        ITestFunctionHelper.instance.typeListTestAsync(list, new ResultCallBack<List<User>>()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(List<User> result)
             {
-                try
-                {
-                    List<User> list = new ArrayList<>();
-                    User user1 = new User();
-                    user1.setName("Alice");
-                    user1.setAge(12);
-                    list.add(user1);
-
-                    List<User> list1 = ITestFunctionClient.fromBinder(service).typeListTest(list);
-                    log(String.format("%s", list1.toString()));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(String.format("%s", result.toString()));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void enumTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        ITestFunctionHelper.instance.enumTestAsync(Color.GREEN, new ResultCallBack<Color>()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(Color result)
             {
-                try
-                {
-                    Color color = ITestFunctionClient.fromBinder(service).enumTest(Color.BLUE);
-                    log(color.name());
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                log(result.name());
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void nullTest()
     {
-        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        ITestFunctionHelper.instance.nullTestAsync(null, new ResultCallBack<User>()
         {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service)
+            public void onSuccess(User result)
             {
-                try
+                if (result != null)
                 {
-                    User user1 = ITestFunctionClient.fromBinder(service).nullTest(null);
-                    if (user1 != null)
-                    {
-                        log(String.format("name = %s;age = %d", user1.getName(), user1.getAge()));
-                    }
-                    else
-                    {
-                        log("return user is null");
-                    }
+                    log(String.format("name = %s;age = %d", result.getName(), result.getAge()));
                 }
-                catch (Exception e)
+                else
                 {
-                    e.printStackTrace();
+                    log("return user is null");
                 }
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name)
+            public void onError(Exception ex)
             {
 
             }
-        }, BIND_AUTO_CREATE);
+        });
     }
 
     private void broadcastTest()
