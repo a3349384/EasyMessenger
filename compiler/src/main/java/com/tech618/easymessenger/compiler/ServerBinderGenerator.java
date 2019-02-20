@@ -75,41 +75,6 @@ public class ServerBinderGenerator
             boolean isNullFlagDefined = false;
             for (VariableElement parameterElement : methodElement.getParameters())
             {
-//                String parameterClassName = parameterElement.asType().toString();
-//                if (ClassHelper.isThirdPartyClass(parameterClassName))
-//                {
-//                    //the parameter should be a thirdparty class, we regard it as a parceable
-//                    onTransactMethodBuilder.addStatement("$1T $2N = null", parameterElement.asType(), parameterElement.getSimpleName());
-//                    if (!isNullFlagDefined)
-//                    {
-//                        onTransactMethodBuilder.addStatement("int isNullFlag = $N.readInt()", onTransactMethodDataParameter);
-//                        isNullFlagDefined = true;
-//                    }
-//                    else
-//                    {
-//                        onTransactMethodBuilder.addStatement("isNullFlag = $N.readInt()", onTransactMethodDataParameter);
-//                    }
-//                    onTransactMethodBuilder.beginControlFlow("if (isNullFlag > 0)");
-//                    onTransactMethodBuilder.addStatement("$N = $T.CREATOR.createFromParcel($N)", parameterElement.getSimpleName(),
-//                            parameterElement.asType(), onTransactMethodDataParameter);
-//                    onTransactMethodBuilder.endControlFlow();
-//                }
-//                else if (ClassHelper.isList(parameterClassName))
-//                {
-//                    onTransactMethodBuilder.addStatement("$T $N = new $T<>()", parameterElement.asType(), parameterElement.getSimpleName(), ArrayList.class);
-//                    onTransactMethodBuilder.addStatement("$N.readList($N, getClass().getClassLoader())", onTransactMethodDataParameter, parameterElement.getSimpleName());
-//                }
-//                else if (parameterElement.asType().getKind() == TypeKind.BOOLEAN)
-//                {
-//                    onTransactMethodBuilder.addStatement("$T $N = $N.readInt() > 0 ? true : false", parameterElement.asType(),
-//                            parameterElement.getSimpleName(), onTransactMethodDataParameter);
-//                }
-//                else
-//                {
-//                    //add statement like: int arg0 = data.readInt();
-//                    onTransactMethodBuilder.addStatement("$T $N = $N.$L()", parameterElement.asType(),
-//                            parameterElement.getSimpleName(), onTransactMethodDataParameter, TypeMirrorHelper.getParcelReadString(parameterElement.asType()));
-//                }
                 readDataBaseOnParameter(onTransactMethodBuilder, parameterElement);
                 parameterNames.add(parameterElement.getSimpleName().toString());
             }
@@ -129,22 +94,6 @@ public class ServerBinderGenerator
             }
             onTransactMethodBuilder.addStatement("$N.writeNoException()", onTransactMethodReplyParameter);
             writeReplyBaseOnParameter(onTransactMethodBuilder, methodReturnTypeMirror);
-//            if (methodReturnType != TypeKind.VOID)
-//            {
-//                if (ClassHelper.isThirdPartyClass(methodElement.getReturnType().toString()))
-//                {
-//
-//                }
-//                else if (methodElement.getReturnType().getKind() == TypeKind.BOOLEAN)
-//                {
-//                    onTransactMethodBuilder.addStatement("$N.writeInt(result ? 1 : 0)", onTransactMethodReplyParameter);
-//                }
-//                else
-//                {
-//                    //add statement like: reply.writeString(result)
-//                    onTransactMethodBuilder.addStatement("$N.$L(result)", onTransactMethodReplyParameter, TypeMirrorHelper.getParcelWriteString(methodElement.getReturnType()));
-//                }
-//            }
             onTransactMethodBuilder.addStatement("return true");
             onTransactMethodBuilder.endControlFlow();
         }
