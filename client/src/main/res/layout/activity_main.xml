@@ -36,6 +36,11 @@
                 android:id="@+id/viewIntTest"/>
         <Button android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="int overload test"
+                android:textAllCaps="false"
+                android:id="@+id/viewIntOverloadTest"/>
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="long test"
                 android:textAllCaps="false"
                 android:id="@+id/viewLongTest"/>

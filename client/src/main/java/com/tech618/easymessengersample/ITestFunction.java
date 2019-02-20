@@ -24,6 +24,8 @@ public interface ITestFunction
 
     int intTest(int num1, int num2);
 
+    int intTest(int num1);
+
     long longTest(long l1, long l2);
 
     float floatTest(float f1, float f2);

@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.viewCharTest).setOnClickListener(this);
         findViewById(R.id.viewShortTest).setOnClickListener(this);
         findViewById(R.id.viewIntTest).setOnClickListener(this);
+        findViewById(R.id.viewIntOverloadTest).setOnClickListener(this);
         findViewById(R.id.viewLongTest).setOnClickListener(this);
         findViewById(R.id.viewFloatTest).setOnClickListener(this);
         findViewById(R.id.viewDoubleTest).setOnClickListener(this);
@@ -95,7 +96,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intTest();
                 break;
             }
-
+            case R.id.viewIntOverloadTest:
+            {
+                intOverloadTest();
+                break;
+            }
             case R.id.viewLongTest:
             {
                 longTest();
@@ -215,6 +220,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onSuccess(int result)
             {
                 log(String.format("%d + %d = %d", 1, 2, result));
+            }
+
+            @Override
+            public void onError(Exception ex)
+            {
+
+            }
+        });
+    }
+
+    private void intOverloadTest()
+    {
+        ITestFunctionHelper.instance.intTestAsync(1, new IntCallback()
+        {
+            @Override
+            public void onSuccess(int result)
+            {
+                log("" + result);
             }
 
             @Override

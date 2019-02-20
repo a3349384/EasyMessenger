@@ -19,6 +19,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.tools.Diagnostic;
 
 /**
  * Created by zmy on 2019/2/19.
@@ -83,7 +84,7 @@ public class ClientClientGenerator
             //生成方法代码
             interfaceMethodBuilder.addStatement("$1T data = $1T.obtain()", TypeNameHelper.typeNameOfParcel());
             interfaceMethodBuilder.addStatement("$1T reply = $1T.obtain()", TypeNameHelper.typeNameOfParcel());
-            interfaceMethodBuilder.addStatement("data.writeString($S)", methodName);
+            interfaceMethodBuilder.addStatement("data.writeString($S)", methodElement.toString());
             interfaceMethodBuilder.beginControlFlow("try");
             boolean isNullFlagDefined = false;
             for (VariableElement parameterElement : methodElement.getParameters())

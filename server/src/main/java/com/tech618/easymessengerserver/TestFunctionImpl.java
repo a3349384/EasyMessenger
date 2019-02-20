@@ -42,6 +42,11 @@ public class TestFunctionImpl
         return num1 + num2;
     }
 
+    public int intTest(int num1)
+    {
+        return num1;
+    }
+
     public long longTest(long l1, long l2)
     {
         return l1 + l2;

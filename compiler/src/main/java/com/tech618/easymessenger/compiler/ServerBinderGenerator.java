@@ -71,7 +71,7 @@ public class ServerBinderGenerator
         for (int i = 0; i < methodElements.size(); i++)
         {
             ExecutableElement methodElement = methodElements.get(i);
-            onTransactMethodBuilder.beginControlFlow("case $S:", methodElement.getSimpleName().toString());
+            onTransactMethodBuilder.beginControlFlow("case $S:", methodElement.toString());
             List<String> parameterNames = new ArrayList<>(methodElement.getParameters().size());
             boolean isNullFlagDefined = false;
             for (VariableElement parameterElement : methodElement.getParameters())
