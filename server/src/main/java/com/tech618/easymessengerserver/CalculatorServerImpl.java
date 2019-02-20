@@ -1,6 +1,5 @@
 package com.tech618.easymessengerserver;
 
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.tech618.easymessenger.BinderInterfaceImpl;
@@ -23,14 +22,24 @@ public class CalculatorServerImpl
         Log.d(TAG, "voidTest called!");
     }
 
-    public int intTest(int num1, int num2)
-    {
-        return num1 + num2;
-    }
-
     public byte byteTest(byte b1, byte b2)
     {
         return (byte) (b1 + b2);
+    }
+
+    public char charTest(char c1, char c2)
+    {
+        return (char) (c1 + c2);
+    }
+
+    public short shortTest(short s1, short s2)
+    {
+        return (short) (s1 + s2);
+    }
+
+    public int intTest(int num1, int num2)
+    {
+        return num1 + num2;
     }
 
     public long longTest(long l1, long l2)
@@ -41,6 +50,11 @@ public class CalculatorServerImpl
     public float floatTest(float f1, float f2)
     {
         return f1 + f2;
+    }
+
+    public double doubleTest(double d1, double d2)
+    {
+        return d1 + d2;
     }
 
     public boolean booleanTest(boolean b)

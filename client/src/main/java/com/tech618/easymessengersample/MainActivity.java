@@ -5,13 +5,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.tech618.easymessenger.IntCallback;
 import com.tech618.easymessenger.VoidCallback;
 import com.tech618.easymessengerclientservercommon.Color;
 import com.tech618.easymessengerclientservercommon.User;
@@ -30,10 +28,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         findViewById(R.id.viewVoidTest).setOnClickListener(this);
-        findViewById(R.id.viewIntTest).setOnClickListener(this);
         findViewById(R.id.viewByteTest).setOnClickListener(this);
+        findViewById(R.id.viewCharTest).setOnClickListener(this);
+        findViewById(R.id.viewShortTest).setOnClickListener(this);
+        findViewById(R.id.viewIntTest).setOnClickListener(this);
         findViewById(R.id.viewLongTest).setOnClickListener(this);
         findViewById(R.id.viewFloatTest).setOnClickListener(this);
+        findViewById(R.id.viewDoubleTest).setOnClickListener(this);
         findViewById(R.id.viewBooleanTest).setOnClickListener(this);
         findViewById(R.id.viewStringTest).setOnClickListener(this);
         findViewById(R.id.viewParcelableTest).setOnClickListener(this);
@@ -58,16 +59,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 voidTest();
                 break;
             }
-            case R.id.viewIntTest:
-            {
-                intTest();
-                break;
-            }
             case R.id.viewByteTest:
             {
                 byteTest();
                 break;
             }
+            case R.id.viewCharTest:
+            {
+                charTest();
+                break;
+            }
+            case R.id.viewShortTest:
+            {
+                shortTest();
+                break;
+            }
+            case R.id.viewIntTest:
+            {
+                intTest();
+                break;
+            }
+
             case R.id.viewLongTest:
             {
                 longTest();
@@ -76,6 +88,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.viewFloatTest:
             {
                 floatTest();
+                break;
+            }
+            case R.id.viewDoubleTest:
+            {
+                doubleTest();
                 break;
             }
             case R.id.viewBooleanTest:
@@ -141,17 +158,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void intTest()
     {
-        ITestFunctionHelper.instance.intTestAsync(1, 2, new IntCallback() {
+        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        {
             @Override
-            public void onSuccess(int result) {
-                Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+            public void onServiceConnected(ComponentName name, IBinder service)
+            {
+                try
+                {
+                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClient.fromBinder(service).intTest(1, 2)));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
 
             @Override
-            public void onError(Exception ex) {
+            public void onServiceDisconnected(ComponentName name)
+            {
 
             }
-        });
+        }, BIND_AUTO_CREATE);
     }
 
     private void byteTest()
@@ -164,6 +191,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try
                 {
                     log(String.format("%d + %d = %d", 1, 2, ITestFunctionClient.fromBinder(service).byteTest((byte) 1, (byte) 2)));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name)
+            {
+
+            }
+        }, BIND_AUTO_CREATE);
+    }
+
+    private void charTest()
+    {
+        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service)
+            {
+                try
+                {
+                    log(String.format("%c + %c = %c", '1', '2',
+                            ITestFunctionClient.fromBinder(service).charTest('1', '2')));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name)
+            {
+
+            }
+        }, BIND_AUTO_CREATE);
+    }
+
+    private void shortTest()
+    {
+        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service)
+            {
+                try
+                {
+                    log(String.format("%d + %d = %d", 1, 2, ITestFunctionClient.fromBinder(service).shortTest((short) 1, (short) 2)));
                 }
                 catch (Exception e)
                 {
@@ -214,6 +292,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try
                 {
                     log(String.format("%f + %f = %f", 1f, 2f, ITestFunctionClient.fromBinder(service).floatTest(1f, 2f)));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name)
+            {
+
+            }
+        }, BIND_AUTO_CREATE);
+    }
+
+    private void doubleTest()
+    {
+        bindService(new Intent(getServiceIntent()), new ServiceConnection()
+        {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service)
+            {
+                try
+                {
+                    log(String.format("%f + %f = %f", 1d, 2d, ITestFunctionClient.fromBinder(service).doubleTest(1d, 2d)));
                 }
                 catch (Exception e)
                 {

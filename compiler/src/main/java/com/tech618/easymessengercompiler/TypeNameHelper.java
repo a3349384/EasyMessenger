@@ -14,6 +14,11 @@ public class TypeNameHelper
         return ClassName.get("android.os", "IBinder");
     }
 
+    public static TypeName typeNameOfBinder()
+    {
+        return ClassName.get("android.os", "Binder");
+    }
+
     public static TypeName typeNameOfParcel()
     {
         return ClassName.get("android.os", "Parcel");
