@@ -1,7 +1,17 @@
 apply plugin: 'java-library'
+apply plugin: 'com.novoda.bintray-release'
 
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+publish {
+    userOrg = 'a3349384'
+    groupId = 'cn.zmy'
+    artifactId = 'easymessenger-lib'
+    publishVersion = '0.1'
+    desc = 'An android IPC library'
+    website = 'https://github.com/a3349384/EasyMessenger'
 }

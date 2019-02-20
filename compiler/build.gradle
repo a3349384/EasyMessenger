@@ -1,4 +1,5 @@
 apply plugin: 'java-library'
+apply plugin: 'com.novoda.bintray-release'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -7,8 +8,27 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
+tasks.withType(Javadoc) {
+    options.encoding = "UTF-8"
+}
+
+repositories {
+    maven {
+        url 'https://dl.bintray.com/a3349384/maven'
+    }
+}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.squareup:javapoet:1.10.0'
-    implementation project(':library')
+    implementation 'cn.zmy:easymessenger-lib:0.1'
+//    implementation project(':library')
+}
+
+publish {
+    userOrg = 'a3349384'
+    groupId = 'cn.zmy'
+    artifactId = 'easymessenger-compiler'
+    publishVersion = '0.1'
+    desc = 'An android IPC library'
+    website = 'https://github.com/a3349384/EasyMessenger'
 }
