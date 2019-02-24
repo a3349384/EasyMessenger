@@ -20,7 +20,7 @@ EasyMessenger
 下载
 --------
 
-```
+```gradle
 implementation 'cn.zmy:easymessenger-lib:0.1'
 annotationProcessor 'cn.zmy:easymessenger-compilier:0.1'
 ```
@@ -32,7 +32,7 @@ annotationProcessor 'cn.zmy:easymessenger-compilier:0.1'
 
 声明接口:
 
-```
+```java
 @BinderClient
 public interface ClientInterface
 {
@@ -42,7 +42,7 @@ public interface ClientInterface
 
 build之后，会生成`ClientInterfaceHelper`类，开发者也正是通过这个Helper类进行IPC通信。
 
-```
+```java
 //使用之前需要初始化
 ClientInterfaceHelper.instance.__init(context, 
     new ComponentName("{server_package}", "{server_service_name}"));
@@ -71,7 +71,7 @@ ClientInterfaceHelper.instance.addAsync(1, 2, new IntCallback()
 
 实现接口:
 
-```
+```java
 @BinderServer
 public class FunctionImpl
 {
