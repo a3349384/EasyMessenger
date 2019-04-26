@@ -3,10 +3,18 @@ package cn.zmy.easymessenger.compiler;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+
+import java.util.List;
+
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
+
 import cn.zmy.easymessenger.BooleanCallback;
 import cn.zmy.easymessenger.ByteCallback;
 import cn.zmy.easymessenger.CharCallBack;
@@ -18,15 +26,6 @@ import cn.zmy.easymessenger.ResultCallBack;
 import cn.zmy.easymessenger.ShortCallback;
 import cn.zmy.easymessenger.VoidCallback;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeKind;
-
 /**
  * Created by zmy on 2019/2/19.
  * 生成IPC通信Helper类
@@ -34,111 +33,47 @@ import javax.lang.model.type.TypeKind;
 
 public class ClientHelperGenerator
 {
+    private static final String sClientName = "mClient";
+    private static final String sStartBindServiceName = "__startBindService";
+    private static final String sWaitTasksName = "mWaitTasks";
+    private static final String sGetClientWithBinderName = "getClientWithBinder";
+
     public static TypeSpec generateHelper(TypeElement binderInterfaceTypeElement, List<ExecutableElement> binderInterfaceMethodElements)
     {
         String helperClassName = getHelperFullName(binderInterfaceTypeElement);
         TypeName helperName = ClassName.bestGuess(helperClassName);
-        TypeName clientName = ClassName.bestGuess(ClientClientGenerator.getClientFullName(binderInterfaceTypeElement));
-
         //单例
         FieldSpec instanceFiled = FieldSpec.builder(helperName, "instance", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                                           .initializer("new $T()", helperName)
                                           .build();
-        //相关全局字段
-        FieldSpec contextFiled = FieldSpec.builder(TypeNameHelper.typeNameOfContext(), "mAppContext", Modifier.PROTECTED).build();
-        FieldSpec componentNameField = FieldSpec.builder(TypeNameHelper.typeNameOfComponentName(), "mServiceComponentName", Modifier.PROTECTED).build();
-        FieldSpec waitTaskField = FieldSpec.builder(ParameterizedTypeName.get(List.class, Runnable.class), "mWaitTasks", Modifier.PROTECTED).build();
-        FieldSpec clientField = FieldSpec.builder(clientName, "mClient", Modifier.PROTECTED).build();
-        //ServiceConnection
-        TypeName serviceConnectionType = ClassName.get("android.content", "ServiceConnection");
-        ParameterSpec componentNameParameter = ParameterSpec.builder(TypeNameHelper.typeNameOfComponentName(), "name").build();
-        ParameterSpec ibinderParameter = ParameterSpec.builder(TypeNameHelper.typeNameOfIBinder(), "service").build();
-        MethodSpec onServiceConnectedMethod = MethodSpec.methodBuilder("onServiceConnected")
-                                                      .addAnnotation(Override.class)
-                                                      .addModifiers(Modifier.PUBLIC)
-                                                      .returns(TypeName.VOID)
-                                                      .addParameter(componentNameParameter)
-                                                      .addParameter(ibinderParameter)
-                                                      .addStatement("$N = $T.fromBinder($N)", clientField, clientName, ibinderParameter)
-                                                      .beginControlFlow("for ($T runnable : $N)", Runnable.class, waitTaskField)
-                                                      .addStatement("runnable.run()")
-                                                      .endControlFlow()
-                                                      .addStatement("$N.clear()", waitTaskField)
-                                                      .build();
-        MethodSpec onServiceDisconnectedMethod = MethodSpec.methodBuilder("onServiceDisconnected")
-                                                         .addAnnotation(Override.class)
-                                                         .addModifiers(Modifier.PUBLIC)
-                                                         .returns(TypeName.VOID)
-                                                         .addParameter(componentNameParameter)
-                                                         .addStatement("$N = null", clientField)
-                                                         .addStatement("__startBindService()")
-                                                         .build();
-        TypeSpec serviceConnectionAnonymousInnerType = TypeSpec.anonymousClassBuilder("")
-                                                               .superclass(serviceConnectionType)
-                                                               .addMethod(onServiceConnectedMethod)
-                                                               .addMethod(onServiceDisconnectedMethod)
-                                                               .build();
-        FieldSpec serviceConnectionField = FieldSpec.builder(serviceConnectionType, "mServiceConnection", Modifier.PROTECTED)
-                                                   .initializer("$L", serviceConnectionAnonymousInnerType)
-                                                   .build();
         //构造方法
         MethodSpec constructor = MethodSpec.constructorBuilder()
                                          .addModifiers(Modifier.PRIVATE)
                                          .build();
-        //__init方法
-        MethodSpec initMethod = MethodSpec.methodBuilder("__init")
-                                        .addModifiers(Modifier.PUBLIC)
-                                        .addParameter(TypeNameHelper.typeNameOfContext(), "context")
-                                        .addParameter(TypeNameHelper.typeNameOfComponentName(), "serviceComponentName")
-                                        .addStatement("$N = context.getApplicationContext()", contextFiled)
-                                        .addStatement("$N = serviceComponentName", componentNameField)
-                                        .addStatement("$N = new $T<>()", waitTaskField, ArrayList.class)
-                                        .build();
-        //__destroy方法
-        MethodSpec destroyMethod = MethodSpec.methodBuilder("__destroy")
-                                           .addModifiers(Modifier.PUBLIC)
-                                           .addStatement("$N.unbindService($N)", contextFiled, serviceConnectionField)
-                                           .addStatement("$N = null", contextFiled)
-                                           .addStatement("$N = null", clientField)
-                                           .addStatement("$N.clear()", waitTaskField)
-                                           .addStatement("$N = null", waitTaskField)
-                                           .build();
-        //__startBindService方法
-        MethodSpec startBindServiceMethod = MethodSpec.methodBuilder("__startBindService")
-                                                    .addModifiers(Modifier.PUBLIC)
-                                                    .addStatement("$1T intent = new $1T()", ClassName.bestGuess("android.content.Intent"))
-                                                    .addStatement("intent.setComponent($N)", componentNameField)
-                                                    .addStatement("$N.bindService(intent, $N, $T.BIND_AUTO_CREATE)", contextFiled, serviceConnectionField, TypeNameHelper.typeNameOfContext())
-                                                    .build();
-        //__isServiceBind方法
-        MethodSpec isServiceBindMethod = MethodSpec.methodBuilder("__isServiceBind")
-                                                 .addModifiers(Modifier.PUBLIC)
-                                                 .returns(TypeName.BOOLEAN)
-                                                 .addStatement("return $N != null", clientField)
-                                                 .build();
+        //实现getClientWithBinder
+        String clientName = ClientClientGenerator.getClientFullName(binderInterfaceTypeElement);
+        TypeName clientTypeName = ClassName.bestGuess(clientName);
+        MethodSpec getClientWithBinderMethod = MethodSpec.methodBuilder(sGetClientWithBinderName)
+                                                         .addAnnotation(Override.class)
+                                                         .addModifiers(Modifier.PROTECTED)
+                                                         .returns(clientTypeName)
+                                                         .addParameter(TypeNameHelper.typeNameOfIBinder(), "binder")
+                                                         .addStatement("return $T.fromBinder(binder)", clientTypeName)
+                                                         .build();
         //开始生成Helper类
         TypeSpec.Builder helperTypeBuilder = TypeSpec.classBuilder(helperClassName)
-                                                 .addModifiers(Modifier.PUBLIC)
-                                                 .addMethod(constructor)
-                                                 .addField(instanceFiled)
-                                                 .addField(contextFiled)
-                                                 .addField(componentNameField)
-                                                 .addField(waitTaskField)
-                                                 .addField(clientField)
-                                                 .addField(serviceConnectionField)
-                                                 .addMethod(initMethod)
-                                                 .addMethod(destroyMethod)
-                                                 .addMethod(startBindServiceMethod)
-                                                 .addMethod(isServiceBindMethod);
+                                                     .addModifiers(Modifier.PUBLIC)
+                                                     .superclass(TypeNameHelper.typeNameOfBaseClientHelper(clientName))
+                                                     .addMethod(constructor)
+                                                     .addField(instanceFiled)
+                                                     .addMethod(getClientWithBinderMethod);
         //开始生成Helper类中的各个IPC通信方法
         for (ExecutableElement methodElement : binderInterfaceMethodElements)
         {
             //生成IPC同步通信方法
-            helperTypeBuilder.addMethod(generateSyncInterfaceMethod(methodElement, clientField.name,
-                    startBindServiceMethod.name));
+            helperTypeBuilder.addMethod(generateSyncInterfaceMethod(methodElement));
             //生成IPC异步通信方法
-            helperTypeBuilder.addMethod(generateAsyncInterfaceMethod(methodElement, clientField.name,
-                    startBindServiceMethod.name, waitTaskField.name));
+            helperTypeBuilder.addMethod(generateAsyncInterfaceMethod(methodElement));
         }
         return helperTypeBuilder.build();
     }
@@ -148,7 +83,7 @@ public class ClientHelperGenerator
         return typeInterface.getSimpleName().toString() + "Helper";
     }
 
-    private static MethodSpec generateSyncInterfaceMethod(ExecutableElement methodElement, String clientName, String startBindServiceName)
+    private static MethodSpec generateSyncInterfaceMethod(ExecutableElement methodElement)
     {
         String methodName = methodElement.getSimpleName().toString();
         MethodSpec.Builder interfaceMethodBuilder = MethodSpec.methodBuilder(methodName)
@@ -159,25 +94,25 @@ public class ClientHelperGenerator
         {
             interfaceMethodBuilder.addParameter(TypeName.get(parameterElement.asType()), parameterElement.getSimpleName().toString());
         }
-        interfaceMethodBuilder.beginControlFlow("if ($L == null)", clientName)
-                .addStatement("$L()", startBindServiceName)
+        interfaceMethodBuilder.beginControlFlow("if ($L == null)", sClientName)
+                .addStatement("$L()", sStartBindServiceName)
                 .addStatement("throw new $T(\"Remote NOT ready!!!\")", TypeNameHelper.typeNameOfRemoteException())
                 .nextControlFlow("else");
 
         String parametersString = ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters());
         if (methodElement.getReturnType().getKind() == TypeKind.VOID)
         {
-            interfaceMethodBuilder.addStatement("$L.$N($L)", clientName, methodElement.getSimpleName(), parametersString);
+            interfaceMethodBuilder.addStatement("$L.$N($L)", sClientName, methodElement.getSimpleName(), parametersString);
         }
         else
         {
-            interfaceMethodBuilder.addStatement("return $L.$N($L)", clientName, methodElement.getSimpleName(), parametersString);
+            interfaceMethodBuilder.addStatement("return $L.$N($L)", sClientName, methodElement.getSimpleName(), parametersString);
         }
         interfaceMethodBuilder.endControlFlow();
         return interfaceMethodBuilder.build();
     }
 
-    private static MethodSpec generateAsyncInterfaceMethod(ExecutableElement methodElement, String clientName, String startBindServiceName, String waitTasksName)
+    private static MethodSpec generateAsyncInterfaceMethod(ExecutableElement methodElement)
     {
         String methodName = methodElement.getSimpleName().toString() + "Async";
         MethodSpec.Builder interfaceMethodBuilder = MethodSpec.methodBuilder(methodName)
@@ -249,7 +184,7 @@ public class ClientHelperGenerator
         if (methodElement.getReturnType().getKind() == TypeKind.VOID)
         {
             runMethodBuilder.beginControlFlow("try")
-                    .addStatement("$L.$N($L)", clientName, methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters()))
+                    .addStatement("$L.$N($L)", sClientName, methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters()))
                     .endControlFlow()
                     .beginControlFlow("catch (Exception ex)")
                     .beginControlFlow("if($L != null)", callbackName)
@@ -265,7 +200,7 @@ public class ClientHelperGenerator
         {
             runMethodBuilder.addStatement("$T result", methodElement.getReturnType())
                     .beginControlFlow("try")
-                    .addStatement("result = $L.$N($L)", clientName, methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters()))
+                    .addStatement("result = $L.$N($L)", sClientName, methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters()))
                     .endControlFlow()
                     .beginControlFlow("catch (Exception ex)")
                     .beginControlFlow("if($L != null)", callbackName)
@@ -282,9 +217,9 @@ public class ClientHelperGenerator
                                              .addMethod(runMethodBuilder.build())
                                              .build();
         interfaceMethodBuilder.addStatement("Runnable runnable = $L", runnableInnerType)
-                .beginControlFlow("if ($L == null)", clientName)
-                .addStatement("$L.add(runnable)", waitTasksName)
-                .addStatement("$L()", startBindServiceName)
+                .beginControlFlow("if ($L == null)", sClientName)
+                .addStatement("$L.add(runnable)", sWaitTasksName)
+                .addStatement("$L()", sStartBindServiceName)
                 .nextControlFlow("else")
                 .addStatement("runnable.run()")
                 .endControlFlow();

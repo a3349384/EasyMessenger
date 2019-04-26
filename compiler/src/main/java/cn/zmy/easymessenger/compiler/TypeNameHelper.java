@@ -1,6 +1,7 @@
 package cn.zmy.easymessenger.compiler;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
 /**
@@ -67,5 +68,13 @@ public class TypeNameHelper
     public static TypeName typeNameOfList()
     {
         return ClassName.get("java.util", "List");
+    }
+
+    public static TypeName typeNameOfBaseClientHelper(String clientName)
+    {
+        ClassName base = ClassName.get("cn.zmy.easymessenger",
+                "BaseClientHelper");
+        ClassName parameter = ClassName.bestGuess(clientName);
+        return ParameterizedTypeName.get(base, parameter);
     }
 }
