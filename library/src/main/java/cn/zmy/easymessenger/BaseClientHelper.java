@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.os.RemoteException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,4 +61,11 @@ public abstract class BaseClientHelper<T>
     }
 
     protected abstract T getClientWithBinder(IBinder binder);
+
+    protected boolean checkClientAvailable() {
+        if (mClient == null) {
+            __startBindService();
+        }
+        return true;
+    }
 }

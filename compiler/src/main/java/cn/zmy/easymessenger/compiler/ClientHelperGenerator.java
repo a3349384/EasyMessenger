@@ -37,6 +37,7 @@ public class ClientHelperGenerator
     private static final String sStartBindServiceName = "__startBindService";
     private static final String sWaitTasksName = "mWaitTasks";
     private static final String sGetClientWithBinderName = "getClientWithBinder";
+    private static final String sCheckClientAvailableName = "checkClientAvailable";
 
     public static TypeSpec generateHelper(TypeElement binderInterfaceTypeElement, List<ExecutableElement> binderInterfaceMethodElements)
     {
@@ -94,11 +95,7 @@ public class ClientHelperGenerator
         {
             interfaceMethodBuilder.addParameter(TypeName.get(parameterElement.asType()), parameterElement.getSimpleName().toString());
         }
-        interfaceMethodBuilder.beginControlFlow("if ($L == null)", sClientName)
-                .addStatement("$L()", sStartBindServiceName)
-                .addStatement("throw new $T(\"Remote NOT ready!!!\")", TypeNameHelper.typeNameOfRemoteException())
-                .nextControlFlow("else");
-
+        interfaceMethodBuilder.beginControlFlow("if ($L())", sCheckClientAvailableName);
         String parametersString = ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters());
         if (methodElement.getReturnType().getKind() == TypeKind.VOID)
         {
@@ -108,6 +105,8 @@ public class ClientHelperGenerator
         {
             interfaceMethodBuilder.addStatement("return $L.$N($L)", sClientName, methodElement.getSimpleName(), parametersString);
         }
+        interfaceMethodBuilder.nextControlFlow("else");
+        interfaceMethodBuilder.addStatement("throw new RemoteException(\"Remote NOT ready!!!\")");
         interfaceMethodBuilder.endControlFlow();
         return interfaceMethodBuilder.build();
     }
