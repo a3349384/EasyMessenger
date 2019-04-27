@@ -14,12 +14,12 @@ import java.util.List;
 
 import cn.zmy.easymessenger.BooleanCallback;
 import cn.zmy.easymessenger.ByteCallback;
-import cn.zmy.easymessenger.CharCallBack;
+import cn.zmy.easymessenger.CharCallback;
 import cn.zmy.easymessenger.DoubleCallback;
 import cn.zmy.easymessenger.FloatCallback;
 import cn.zmy.easymessenger.IntCallback;
 import cn.zmy.easymessenger.LongCallback;
-import cn.zmy.easymessenger.ResultCallBack;
+import cn.zmy.easymessenger.ResultCallback;
 import cn.zmy.easymessenger.ShortCallback;
 import cn.zmy.easymessenger.VoidCallback;
 import cn.zmy.easymessenger.common.Color;
@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void charTest()
     {
-        ITestFunctionHelper.instance.charTestAsync('1', '2', new CharCallBack()
+        ITestFunctionHelper.instance.charTestAsync('1', '2', new CharCallback()
         {
             @Override
             public void onSuccess(char result)
@@ -376,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void stringTest()
     {
-        ITestFunctionHelper.instance.stringTestAsync("hello", "world", new ResultCallBack<String>()
+        ITestFunctionHelper.instance.stringTestAsync("hello", "world", new ResultCallback<String>()
         {
             @Override
             public void onSuccess(String result)
@@ -397,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         User user = new User();
         user.setName("Bob");
         user.setAge(11);
-        ITestFunctionHelper.instance.parcelableTestAsync(user, new ResultCallBack<User>()
+        ITestFunctionHelper.instance.parcelableTestAsync(user, new ResultCallback<User>()
         {
             @Override
             public void onSuccess(User result)
@@ -418,7 +418,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         List<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(2);
-        ITestFunctionHelper.instance.primitiveListTestAsync(list, new ResultCallBack<List<Integer>>()
+        ITestFunctionHelper.instance.primitiveListTestAsync(list, new ResultCallback<List<Integer>>()
         {
             @Override
             public void onSuccess(List<Integer> result)
@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         user1.setName("Alice");
         user1.setAge(12);
         list.add(user1);
-        ITestFunctionHelper.instance.typeListTestAsync(list, new ResultCallBack<List<User>>()
+        ITestFunctionHelper.instance.typeListTestAsync(list, new ResultCallback<List<User>>()
         {
             @Override
             public void onSuccess(List<User> result)
@@ -459,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void enumTest()
     {
-        ITestFunctionHelper.instance.enumTestAsync(Color.GREEN, new ResultCallBack<Color>()
+        ITestFunctionHelper.instance.enumTestAsync(Color.GREEN, new ResultCallback<Color>()
         {
             @Override
             public void onSuccess(Color result)
@@ -477,7 +477,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void nullTest()
     {
-        ITestFunctionHelper.instance.nullTestAsync(null, new ResultCallBack<User>()
+        ITestFunctionHelper.instance.nullTestAsync(null, new ResultCallback<User>()
         {
             @Override
             public void onSuccess(User result)
@@ -507,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void boolArrayTest()
     {
-        ITestFunctionHelper.instance.booleanArrayTestAsync(new boolean[]{false}, new boolean[]{true}, new ResultCallBack<boolean[]>()
+        ITestFunctionHelper.instance.booleanArrayTestAsync(new boolean[]{false}, new boolean[]{true}, new ResultCallback<boolean[]>()
         {
             @Override
             public void onSuccess(boolean[] result)
@@ -525,7 +525,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void byteArrayTest()
     {
-        ITestFunctionHelper.instance.byteArrayTestAsync(new byte[]{(byte)1}, new byte[]{(byte) 2}, new ResultCallBack<byte[]>()
+        ITestFunctionHelper.instance.byteArrayTestAsync(new byte[]{(byte)1}, new byte[]{(byte) 2}, new ResultCallback<byte[]>()
         {
             @Override
             public void onSuccess(byte[] result)
@@ -543,7 +543,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void charArrayTest()
     {
-        ITestFunctionHelper.instance.charArrayTestAsync(new char[]{'a'}, new char[]{'b'}, new ResultCallBack<char[]>()
+        ITestFunctionHelper.instance.charArrayTestAsync(new char[]{'a'}, new char[]{'b'}, new ResultCallback<char[]>()
         {
             @Override
             public void onSuccess(char[] result)
@@ -561,7 +561,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void intArrayTest()
     {
-        ITestFunctionHelper.instance.intArrayTestAsync(new int[]{1}, new int[]{2}, new ResultCallBack<int[]>()
+        ITestFunctionHelper.instance.intArrayTestAsync(new int[]{1}, new int[]{2}, new ResultCallback<int[]>()
         {
             @Override
             public void onSuccess(int[] result)
@@ -579,7 +579,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void longArrayTest()
     {
-        ITestFunctionHelper.instance.longArrayTestAsync(new long[]{1}, new long[]{2}, new ResultCallBack<long[]>()
+        ITestFunctionHelper.instance.longArrayTestAsync(new long[]{1}, new long[]{2}, new ResultCallback<long[]>()
         {
             @Override
             public void onSuccess(long[] result)
@@ -597,7 +597,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void floatArrayTest()
     {
-        ITestFunctionHelper.instance.floatArrayTestAsync(new float[]{1}, new float[]{2}, new ResultCallBack<float[]>()
+        ITestFunctionHelper.instance.floatArrayTestAsync(new float[]{1}, new float[]{2}, new ResultCallback<float[]>()
         {
             @Override
             public void onSuccess(float[] result)
@@ -615,7 +615,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void doubleArrayTest()
     {
-        ITestFunctionHelper.instance.doubleArrayTestAsync(new double[]{1}, new double[]{2}, new ResultCallBack<double[]>()
+        ITestFunctionHelper.instance.doubleArrayTestAsync(new double[]{1}, new double[]{2}, new ResultCallback<double[]>()
         {
             @Override
             public void onSuccess(double[] result)
@@ -635,7 +635,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         User[] users1 = new User[]{new User("张三", 20)};
         User[] users2 = new User[]{new User("李四", 30)};
-        ITestFunctionHelper.instance.parcelableArrayTestAsync(users1, users2, new ResultCallBack<User[]>()
+        ITestFunctionHelper.instance.parcelableArrayTestAsync(users1, users2, new ResultCallback<User[]>()
         {
             @Override
             public void onSuccess(User[] result)

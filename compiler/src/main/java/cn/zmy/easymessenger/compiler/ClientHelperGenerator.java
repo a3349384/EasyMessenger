@@ -3,11 +3,11 @@ package cn.zmy.easymessenger.compiler;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -15,16 +15,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 
-import cn.zmy.easymessenger.BooleanCallback;
-import cn.zmy.easymessenger.ByteCallback;
-import cn.zmy.easymessenger.CharCallBack;
-import cn.zmy.easymessenger.DoubleCallback;
-import cn.zmy.easymessenger.FloatCallback;
-import cn.zmy.easymessenger.IntCallback;
-import cn.zmy.easymessenger.LongCallback;
-import cn.zmy.easymessenger.ResultCallBack;
-import cn.zmy.easymessenger.ShortCallback;
-import cn.zmy.easymessenger.VoidCallback;
+import cn.zmy.easymessenger.Constant;
 
 /**
  * Created by zmy on 2019/2/19.
@@ -35,7 +26,7 @@ public class ClientHelperGenerator
 {
     private static final String sClientName = "mClient";
     private static final String sStartBindServiceName = "__startBindService";
-    private static final String sWaitTasksName = "mWaitTasks";
+    private static final String sRunAfterConnectedName = "__runAfterConnected";
     private static final String sGetClientWithBinderName = "getClientWithBinder";
     private static final String sCheckClientAvailableName = "checkClientAvailable";
 
@@ -121,107 +112,82 @@ public class ClientHelperGenerator
         {
             interfaceMethodBuilder.addParameter(TypeName.get(parameterElement.asType()), parameterElement.getSimpleName().toString(), Modifier.FINAL);
         }
-        String callbackName = "callback";
-        switch (methodElement.getReturnType().getKind())
+        String callbackParameterName = "callback";
+        TypeKind returnKind = methodElement.getReturnType().getKind();
+        TypeName callBackTypeName = ClassName.bestGuess(
+                String.format("%s.%sCallback", Constant.PACKAGE_BASE, kindToPrefix(returnKind)));
+        interfaceMethodBuilder.addParameter(callBackTypeName, callbackParameterName, Modifier.FINAL);
+        String parameterString = ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters());
+        MethodSpec.Builder callMethodBuilder = MethodSpec.methodBuilder("call")
+                                                         .addAnnotation(Override.class)
+                                                         .returns(Object.class)
+                                                         .addModifiers(Modifier.PUBLIC)
+                                                         .addException(Exception.class);
+        if (returnKind == TypeKind.VOID)
         {
-            case VOID:
-            {
-                interfaceMethodBuilder.addParameter(VoidCallback.class, callbackName, Modifier.FINAL);
-                break;
-            }
-            case BOOLEAN:
-            {
-                interfaceMethodBuilder.addParameter(BooleanCallback.class, callbackName, Modifier.FINAL);
-                break;
-            }
-            case CHAR:
-            {
-                interfaceMethodBuilder.addParameter(CharCallBack.class, callbackName, Modifier.FINAL);
-                break;
-            }
-            case BYTE:
-            {
-                interfaceMethodBuilder.addParameter(ByteCallback.class, callbackName, Modifier.FINAL);
-                break;
-            }
-            case SHORT:
-            {
-                interfaceMethodBuilder.addParameter(ShortCallback.class, callbackName, Modifier.FINAL);
-                break;
-            }
-            case FLOAT:
-            {
-                interfaceMethodBuilder.addParameter(FloatCallback.class, callbackName, Modifier.FINAL);
-                break;
-            }
-            case INT:
-            {
-                interfaceMethodBuilder.addParameter(IntCallback.class, callbackName, Modifier.FINAL);
-                break;
-            }
-            case LONG:
-            {
-                interfaceMethodBuilder.addParameter(LongCallback.class, callbackName, Modifier.FINAL);
-                break;
-            }
-            case DOUBLE:
-            {
-                interfaceMethodBuilder.addParameter(DoubleCallback.class, callbackName, Modifier.FINAL);
-                break;
-            }
-            default:
-            {
-                interfaceMethodBuilder.addParameter(ParameterizedTypeName.get(ClassName.get(ResultCallBack.class),
-                        TypeName.get(methodElement.getReturnType())), callbackName, Modifier.FINAL);
-                break;
-            }
-        }
-        MethodSpec.Builder runMethodBuilder = MethodSpec.methodBuilder("run")
-                                                      .addModifiers(Modifier.PUBLIC)
-                                                      .returns(TypeName.VOID)
-                                                      .addAnnotation(Override.class);
-        if (methodElement.getReturnType().getKind() == TypeKind.VOID)
-        {
-            runMethodBuilder.beginControlFlow("try")
-                    .addStatement("$L.$N($L)", sClientName, methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters()))
-                    .endControlFlow()
-                    .beginControlFlow("catch (Exception ex)")
-                    .beginControlFlow("if($L != null)", callbackName)
-                    .addStatement("$L.onError(ex)", callbackName)
-                    .endControlFlow()
-                    .addStatement("return")
-                    .endControlFlow()
-                    .beginControlFlow("if($L != null)", callbackName)
-                    .addStatement("$L.onSuccess()", callbackName)
-                    .endControlFlow();
+            callMethodBuilder.addStatement("$L.$N($L)", sClientName,
+                    methodElement.getSimpleName(), parameterString);
+            callMethodBuilder.addStatement("return null");
         }
         else
         {
-            runMethodBuilder.addStatement("$T result", methodElement.getReturnType())
-                    .beginControlFlow("try")
-                    .addStatement("result = $L.$N($L)", sClientName, methodElement.getSimpleName(), ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters()))
-                    .endControlFlow()
-                    .beginControlFlow("catch (Exception ex)")
-                    .beginControlFlow("if($L != null)", callbackName)
-                    .addStatement("$L.onError(ex)", callbackName)
-                    .endControlFlow()
-                    .addStatement("return")
-                    .endControlFlow()
-                    .beginControlFlow("if($L != null)", callbackName)
-                    .addStatement("$L.onSuccess(result)", callbackName)
-                    .endControlFlow();
+            callMethodBuilder.addStatement("return $L.$N($L)", sClientName,
+                    methodElement.getSimpleName(), parameterString);
         }
-        TypeSpec runnableInnerType = TypeSpec.anonymousClassBuilder("")
-                                             .addSuperinterface(Runnable.class)
-                                             .addMethod(runMethodBuilder.build())
+        TypeSpec callableInnerType = TypeSpec.anonymousClassBuilder("")
+                                             .addSuperinterface(Callable.class)
+                                             .addMethod(callMethodBuilder.build())
                                              .build();
-        interfaceMethodBuilder.addStatement("Runnable runnable = $L", runnableInnerType)
-                .beginControlFlow("if ($L == null)", sClientName)
-                .addStatement("$L.add(runnable)", sWaitTasksName)
-                .addStatement("$L()", sStartBindServiceName)
-                .nextControlFlow("else")
-                .addStatement("runnable.run()")
-                .endControlFlow();
+        TypeName taskTypeName = ClassName.bestGuess(
+                String.format("%s.task.%sTask", Constant.PACKAGE_BASE, kindToPrefix(returnKind)));
+        interfaceMethodBuilder.addStatement("new $T($L, $L, this).run()", taskTypeName, callableInnerType, callbackParameterName);
         return interfaceMethodBuilder.build();
+    }
+
+    private static String kindToPrefix(TypeKind kind)
+    {
+        switch (kind)
+        {
+            case VOID:
+            {
+                return "Void";
+            }
+            case BOOLEAN:
+            {
+                return "Boolean";
+            }
+            case CHAR:
+            {
+                return "Char";
+            }
+            case BYTE:
+            {
+                return "Byte";
+            }
+            case SHORT:
+            {
+                return "Short";
+            }
+            case FLOAT:
+            {
+                return "Float";
+            }
+            case INT:
+            {
+                return "Int";
+            }
+            case LONG:
+            {
+                return "Long";
+            }
+            case DOUBLE:
+            {
+                return "Double";
+            }
+            default:
+            {
+                return "Result";
+            }
+        }
     }
 }

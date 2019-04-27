@@ -9,24 +9,25 @@ import android.os.RemoteException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Client Helper基类
  * */
 public abstract class BaseClientHelper<T>
 {
-    protected Context mAppContext;
-    protected ComponentName mServiceComponentName;
-    protected List<Runnable> mWaitTasks;
+    private Context mAppContext;
+    private ComponentName mServiceComponentName;
+    private Queue<Runnable> mWaitTasks;
     protected T mClient;
-    protected ServiceConnection mServiceConnection = new ServiceConnection() {
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mClient = getClientWithBinder(service);
-            for (Runnable runnable : mWaitTasks) {
-                runnable.run();
+            while (!mWaitTasks.isEmpty()) {
+                mWaitTasks.poll().run();
             }
-            mWaitTasks.clear();
         }
 
         @Override
@@ -39,7 +40,7 @@ public abstract class BaseClientHelper<T>
     public void __init(Context context, ComponentName serviceComponentName) {
         mAppContext = context.getApplicationContext();
         mServiceComponentName = serviceComponentName;
-        mWaitTasks = new ArrayList<>();
+        mWaitTasks = new ConcurrentLinkedQueue<>();
     }
 
     public void __destroy() {
@@ -58,6 +59,11 @@ public abstract class BaseClientHelper<T>
 
     public boolean __isServiceBind() {
         return mClient != null;
+    }
+
+    public void __runAfterConnected(Runnable runnable)
+    {
+        mWaitTasks.add(runnable);
     }
 
     protected abstract T getClientWithBinder(IBinder binder);
