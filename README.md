@@ -17,20 +17,20 @@ EasyMessenger
 - ArrayList
 - enum(需要实现parcelable)
 
-下载
+### 下载
 --------
 
 ```gradle
 implementation 'cn.zmy:easymessenger-lib:0.1'
-annotationProcessor 'cn.zmy:easymessenger-compilier:0.1'
+annotationProcessor 'cn.zmy:easymessenger-compiler:0.1'
 ```
 
-开始使用
+### 开始使用
 --------
 
-### Client
+#### Client使用
 
-声明接口:
+Client声明接口，例如：
 
 ```java
 @BinderClient
@@ -40,17 +40,17 @@ public interface ClientInterface
 }
 ```
 
-build之后，会生成`ClientInterfaceHelper`类，开发者也正是通过这个Helper类进行IPC通信。
+build之后，会生成`ClientInterfaceHelper`类，开发者也正是通过这个Helper类进行IPC通信。Helper类的命名规则为：Client接口的名称 + Helper。接下来看一下Client如何使用Helper发起IPC请求。
 
 ```java
 //使用之前需要初始化
 ClientInterfaceHelper.instance.__init(context, 
     new ComponentName("{server_package}", "{server_service_name}"));
     
-//同步IPC调用
+//Client以同步的方式发起IPC调用
 int result = ClientInterfaceHelper.instance.add(1, 2);
     
-//异步IPC调用
+//Client以异步的方式IPC调用
 ClientInterfaceHelper.instance.addAsync(1, 2, new IntCallback()
 {
     @Override
@@ -67,9 +67,9 @@ ClientInterfaceHelper.instance.addAsync(1, 2, new IntCallback()
 });
 ```
 
-### Server
+#### Server使用
 
-实现接口:
+Server需要实现按照Client定义的接口进行实现，例如:
 
 ```java
 @BinderServer
@@ -84,7 +84,7 @@ public class FunctionImpl
 }
 ```
 
-build之后会生成`FunctionImplBinder`,将这个Binder和Service绑定：
+build之后会生成`FunctionImplBinder`类,这个类是一个Binder，具体命名规则为：Server的实现类的名称 + Binder。将这个Binder和Service绑定：
 
 ```java
 public class ServerService extends Service
@@ -97,7 +97,9 @@ public class ServerService extends Service
 }
 ```
 
-License
+接着在AndroidManifest.xml对这个Service进行注册即可。由于涉及到进程间通信，需要将Service的export属性设为true。
+
+### License
 -------
 
     Licensed under the Apache License, Version 2.0 (the "License");
