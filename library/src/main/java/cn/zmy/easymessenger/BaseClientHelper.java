@@ -67,11 +67,4 @@ public abstract class BaseClientHelper<T>
     }
 
     protected abstract T getClientWithBinder(IBinder binder);
-
-    protected boolean checkClientAvailable() {
-        if (mClient == null) {
-            __startBindService();
-        }
-        return true;
-    }
 }

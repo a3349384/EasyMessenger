@@ -25,10 +25,9 @@ import cn.zmy.easymessenger.Constant;
 public class ClientHelperGenerator
 {
     private static final String sClientName = "mClient";
+    private static final String sIsServiceBind = "__isServiceBind";
     private static final String sStartBindServiceName = "__startBindService";
-    private static final String sRunAfterConnectedName = "__runAfterConnected";
     private static final String sGetClientWithBinderName = "getClientWithBinder";
-    private static final String sCheckClientAvailableName = "checkClientAvailable";
 
     public static TypeSpec generateHelper(TypeElement binderInterfaceTypeElement, List<ExecutableElement> binderInterfaceMethodElements)
     {
@@ -86,7 +85,7 @@ public class ClientHelperGenerator
         {
             interfaceMethodBuilder.addParameter(TypeName.get(parameterElement.asType()), parameterElement.getSimpleName().toString());
         }
-        interfaceMethodBuilder.beginControlFlow("if ($L())", sCheckClientAvailableName);
+        interfaceMethodBuilder.beginControlFlow("if ($L())", sIsServiceBind);
         String parametersString = ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters());
         if (methodElement.getReturnType().getKind() == TypeKind.VOID)
         {
@@ -97,7 +96,8 @@ public class ClientHelperGenerator
             interfaceMethodBuilder.addStatement("return $L.$N($L)", sClientName, methodElement.getSimpleName(), parametersString);
         }
         interfaceMethodBuilder.nextControlFlow("else");
-        interfaceMethodBuilder.addStatement("throw new RemoteException(\"Remote NOT ready!!!\")");
+        interfaceMethodBuilder.addStatement("$L()", sStartBindServiceName);
+        interfaceMethodBuilder.addStatement("throw new RemoteException($T.REMOTE_NOT_READY)", Constant.class);
         interfaceMethodBuilder.endControlFlow();
         return interfaceMethodBuilder.build();
     }
