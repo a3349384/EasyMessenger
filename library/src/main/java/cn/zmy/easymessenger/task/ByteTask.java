@@ -1,6 +1,8 @@
 package cn.zmy.easymessenger.task;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import cn.zmy.easymessenger.BaseClientHelper;
 import cn.zmy.easymessenger.ByteCallback;
@@ -21,30 +23,35 @@ public class ByteTask implements Runnable
     @Override
     public void run()
     {
-        if (mClientHelper.__isServiceBind())
-        {
-            byte result;
-            try
-            {
-                result = (byte) mCallable.call();
-            }
-            catch (Exception ex)
-            {
-                if (mCallback != null)
-                {
-                    mCallback.onError(ex);
-                }
-                return;
-            }
-            if (mCallback != null)
-            {
-                mCallback.onSuccess(result);
-            }
-        }
-        else
+        if (!mClientHelper.__isServiceBind())
         {
             mClientHelper.__runAfterConnected(this);
             mClientHelper.__startBindService();
+            return;
         }
+        ThreadPoolManager.instance.submit(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                byte result;
+                try
+                {
+                    result = (byte) mCallable.call();
+                }
+                catch (Exception ex)
+                {
+                    if (mCallback != null)
+                    {
+                        mCallback.onError(ex);
+                    }
+                    return;
+                }
+                if (mCallback != null)
+                {
+                    mCallback.onSuccess(result);
+                }
+            }
+        });
     }
 }

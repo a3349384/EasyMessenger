@@ -21,30 +21,35 @@ public class FloatTask implements Runnable
     @Override
     public void run()
     {
-        if (mClientHelper.__isServiceBind())
-        {
-            float result;
-            try
-            {
-                result = (float) mCallable.call();
-            }
-            catch (Exception ex)
-            {
-                if (mCallback != null)
-                {
-                    mCallback.onError(ex);
-                }
-                return;
-            }
-            if (mCallback != null)
-            {
-                mCallback.onSuccess(result);
-            }
-        }
-        else
+        if (!mClientHelper.__isServiceBind())
         {
             mClientHelper.__runAfterConnected(this);
             mClientHelper.__startBindService();
+            return;
         }
+        ThreadPoolManager.instance.submit(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                float result;
+                try
+                {
+                    result = (float) mCallable.call();
+                }
+                catch (Exception ex)
+                {
+                    if (mCallback != null)
+                    {
+                        mCallback.onError(ex);
+                    }
+                    return;
+                }
+                if (mCallback != null)
+                {
+                    mCallback.onSuccess(result);
+                }
+            }
+        });
     }
 }

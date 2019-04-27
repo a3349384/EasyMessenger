@@ -664,9 +664,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return new ComponentName("cn.zmy.easymessenger.server", "cn.zmy.easymessenger.server.ServerService");
     }
 
-    private void log(String s)
+    private void log(final String s)
     {
         Log.d(TAG, s);
-        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+        runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -21,30 +21,35 @@ public class ResultTask<T> implements Runnable
     @Override
     public void run()
     {
-        if (mClientHelper.__isServiceBind())
-        {
-            T result;
-            try
-            {
-                result = (T) mCallable.call();
-            }
-            catch (Exception ex)
-            {
-                if (mCallback != null)
-                {
-                    mCallback.onError(ex);
-                }
-                return;
-            }
-            if (mCallback != null)
-            {
-                mCallback.onSuccess(result);
-            }
-        }
-        else
+        if (!mClientHelper.__isServiceBind())
         {
             mClientHelper.__runAfterConnected(this);
             mClientHelper.__startBindService();
+            return;
         }
+        ThreadPoolManager.instance.submit(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                T result;
+                try
+                {
+                    result = (T) mCallable.call();
+                }
+                catch (Exception ex)
+                {
+                    if (mCallback != null)
+                    {
+                        mCallback.onError(ex);
+                    }
+                    return;
+                }
+                if (mCallback != null)
+                {
+                    mCallback.onSuccess(result);
+                }
+            }
+        });
     }
 }

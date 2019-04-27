@@ -21,30 +21,35 @@ public class BooleanTask implements Runnable
     @Override
     public void run()
     {
-        if (mClientHelper.__isServiceBind())
-        {
-            boolean result;
-            try
-            {
-                result = (boolean) mCallable.call();
-            }
-            catch (Exception ex)
-            {
-                if (mCallback != null)
-                {
-                    mCallback.onError(ex);
-                }
-                return;
-            }
-            if (mCallback != null)
-            {
-                mCallback.onSuccess(result);
-            }
-        }
-        else
+        if (!mClientHelper.__isServiceBind())
         {
             mClientHelper.__runAfterConnected(this);
             mClientHelper.__startBindService();
+            return;
         }
+        ThreadPoolManager.instance.submit(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                boolean result;
+                try
+                {
+                    result = (boolean) mCallable.call();
+                }
+                catch (Exception ex)
+                {
+                    if (mCallback != null)
+                    {
+                        mCallback.onError(ex);
+                    }
+                    return;
+                }
+                if (mCallback != null)
+                {
+                    mCallback.onSuccess(result);
+                }
+            }
+        });
     }
 }
