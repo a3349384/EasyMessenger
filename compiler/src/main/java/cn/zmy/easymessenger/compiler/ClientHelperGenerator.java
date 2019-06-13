@@ -14,7 +14,9 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
+import javax.tools.Diagnostic;
 
+import cn.zmy.easymessenger.BinderClient;
 import cn.zmy.easymessenger.Constant;
 
 /**
@@ -25,13 +27,14 @@ import cn.zmy.easymessenger.Constant;
 public class ClientHelperGenerator
 {
     private static final String sClientName = "mClient";
-    private static final String sIsServiceBind = "__isServiceBind";
-    private static final String sStartBindServiceName = "__startBindService";
-    private static final String sGetClientWithBinderName = "getClientWithBinder";
+    private static final String sStartBindServerName = "__startBindServer";
+    private static final String sGetClientWithBinderName = "__getClientWithBinder";
+    private static final String sGetBinderKeyName = "__getBinderKey";
 
-    public static TypeSpec generateHelper(TypeElement binderInterfaceTypeElement, List<ExecutableElement> binderInterfaceMethodElements)
+    public static TypeSpec generateHelper(TypeElement binderClientTypeElement,
+                                          List<ExecutableElement> binderClientMethodElements)
     {
-        String helperClassName = getHelperFullName(binderInterfaceTypeElement);
+        String helperClassName = getHelperFullName(binderClientTypeElement);
         TypeName helperName = ClassName.bestGuess(helperClassName);
         //单例
         FieldSpec instanceFiled = FieldSpec.builder(helperName, "instance", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
@@ -41,9 +44,9 @@ public class ClientHelperGenerator
         MethodSpec constructor = MethodSpec.constructorBuilder()
                                          .addModifiers(Modifier.PRIVATE)
                                          .build();
-        //实现getClientWithBinder
-        String clientName = ClientClientGenerator.getClientFullName(binderInterfaceTypeElement);
+        String clientName = ClientClientGenerator.getClientFullName(binderClientTypeElement);
         TypeName clientTypeName = ClassName.bestGuess(clientName);
+        //实现getClientWithBinder
         MethodSpec getClientWithBinderMethod = MethodSpec.methodBuilder(sGetClientWithBinderName)
                                                          .addAnnotation(Override.class)
                                                          .addModifiers(Modifier.PROTECTED)
@@ -51,15 +54,30 @@ public class ClientHelperGenerator
                                                          .addParameter(TypeNameHelper.typeNameOfIBinder(), "binder")
                                                          .addStatement("return $T.fromBinder(binder)", clientTypeName)
                                                          .build();
+        //实现getBinderKey
+        String binderKey = binderClientTypeElement.getAnnotation(BinderClient.class).key();
+        if (binderKey == null || binderKey.trim().isEmpty())
+        {
+            String errorMsg = String.format("The key of %s is null or empty.", binderClientTypeElement.getSimpleName());
+            Global.messager.printMessage(Diagnostic.Kind.ERROR, errorMsg);
+            throw new RuntimeException(errorMsg);
+        }
+        MethodSpec getBinderKeyMethod = MethodSpec.methodBuilder(sGetBinderKeyName)
+                                                  .addAnnotation(Override.class)
+                                                  .addModifiers(Modifier.PROTECTED)
+                                                  .returns(String.class)
+                                                  .addStatement("return $S", binderKey)
+                                                  .build();
         //开始生成Helper类
         TypeSpec.Builder helperTypeBuilder = TypeSpec.classBuilder(helperClassName)
                                                      .addModifiers(Modifier.PUBLIC)
                                                      .superclass(TypeNameHelper.typeNameOfBaseClientHelper(clientName))
                                                      .addMethod(constructor)
                                                      .addField(instanceFiled)
-                                                     .addMethod(getClientWithBinderMethod);
+                                                     .addMethod(getClientWithBinderMethod)
+                                                     .addMethod(getBinderKeyMethod);
         //开始生成Helper类中的各个IPC通信方法
-        for (ExecutableElement methodElement : binderInterfaceMethodElements)
+        for (ExecutableElement methodElement : binderClientMethodElements)
         {
             //生成IPC同步通信方法
             helperTypeBuilder.addMethod(generateSyncInterfaceMethod(methodElement));
@@ -85,7 +103,7 @@ public class ClientHelperGenerator
         {
             interfaceMethodBuilder.addParameter(TypeName.get(parameterElement.asType()), parameterElement.getSimpleName().toString());
         }
-        interfaceMethodBuilder.beginControlFlow("if ($L())", sIsServiceBind);
+        interfaceMethodBuilder.addStatement("$L()", sStartBindServerName);
         String parametersString = ParameterHelper.getMethodParameterStringByParameterElements(methodElement.getParameters());
         if (methodElement.getReturnType().getKind() == TypeKind.VOID)
         {
@@ -95,10 +113,6 @@ public class ClientHelperGenerator
         {
             interfaceMethodBuilder.addStatement("return $L.$N($L)", sClientName, methodElement.getSimpleName(), parametersString);
         }
-        interfaceMethodBuilder.nextControlFlow("else");
-        interfaceMethodBuilder.addStatement("$L()", sStartBindServiceName);
-        interfaceMethodBuilder.addStatement("throw new RemoteException($T.REMOTE_NOT_READY)", Constant.class);
-        interfaceMethodBuilder.endControlFlow();
         return interfaceMethodBuilder.build();
     }
 

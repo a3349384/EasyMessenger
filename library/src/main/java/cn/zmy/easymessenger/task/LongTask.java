@@ -3,7 +3,6 @@ package cn.zmy.easymessenger.task;
 import java.util.concurrent.Callable;
 
 import cn.zmy.easymessenger.BaseClientHelper;
-import cn.zmy.easymessenger.IntCallback;
 import cn.zmy.easymessenger.LongCallback;
 
 public class LongTask implements Runnable
@@ -22,12 +21,6 @@ public class LongTask implements Runnable
     @Override
     public void run()
     {
-        if (!mClientHelper.__isServiceBind())
-        {
-            mClientHelper.__runAfterConnected(this);
-            mClientHelper.__startBindService();
-            return;
-        }
         ThreadPoolManager.instance.submit(new Runnable()
         {
             @Override
@@ -36,6 +29,7 @@ public class LongTask implements Runnable
                 long result;
                 try
                 {
+                    mClientHelper.__startBindServer();
                     result = (long) mCallable.call();
                 }
                 catch (Exception ex)

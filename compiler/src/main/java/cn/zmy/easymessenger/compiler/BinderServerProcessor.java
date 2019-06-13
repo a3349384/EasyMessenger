@@ -2,7 +2,6 @@ package cn.zmy.easymessenger.compiler;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
-import cn.zmy.easymessenger.BinderServer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +20,8 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
+
+import cn.zmy.easymessenger.BinderServer;
 
 /**
  * Created by zmy on 2018/4/7.
@@ -48,8 +49,9 @@ public class BinderServerProcessor extends AbstractProcessor
             String binderServerName = elementClass.toString();
             if (elementClass.getKind() != ElementKind.CLASS)
             {
-                Global.messager.printMessage(Diagnostic.Kind.ERROR, binderServerName + " is not a class!");
-                return false;
+                String errorMsg = binderServerName + " is not a class!";
+                Global.messager.printMessage(Diagnostic.Kind.ERROR, errorMsg);
+                throw new RuntimeException(errorMsg);
             }
             //it's type is class, so it must be a TypeElement
             TypeElement binderServerTypeElement = (TypeElement) elementClass;
@@ -66,12 +68,13 @@ public class BinderServerProcessor extends AbstractProcessor
                 }
             }
             String packageName = Global.elements.getPackageOf(binderServerTypeElement).getQualifiedName().toString();
-            TypeSpec binderTypeSpec = ServerBinderGenerator.generateBinder(binderServerTypeElement, binderServerMethodElements);
-            JavaFile javaFile = JavaFile.builder(packageName, binderTypeSpec).build();
+            TypeSpec binderTypeSpec = ServerBinderGenerator.generate(binderServerTypeElement, binderServerMethodElements);
+            TypeSpec providerTypeSpec = ServerContentProviderGenerator.generate(packageName,
+                    binderServerTypeElement.getSimpleName().toString(), binderTypeSpec.name);
             try
             {
-                javaFile.writeTo(mFiler);
-                Global.messager.printMessage(Diagnostic.Kind.NOTE,  packageName + "." + binderTypeSpec.name + " has generated!");
+                JavaFile.builder(packageName, binderTypeSpec).build().writeTo(mFiler);
+                JavaFile.builder(packageName, providerTypeSpec).build().writeTo(mFiler);
             }
             catch (IOException e)
             {

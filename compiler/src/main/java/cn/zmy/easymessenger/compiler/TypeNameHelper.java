@@ -77,4 +77,9 @@ public class TypeNameHelper
         ClassName parameter = ClassName.bestGuess(clientName);
         return ParameterizedTypeName.get(base, parameter);
     }
+
+    public static TypeName typeNameOfAbsBinderProvider()
+    {
+        return ClassName.bestGuess("cn.zmy.easymessenger.contentprovider.AbsBinderProvider");
+    }
 }

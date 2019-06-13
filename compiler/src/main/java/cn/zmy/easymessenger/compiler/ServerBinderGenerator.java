@@ -1,5 +1,6 @@
 package cn.zmy.easymessenger.compiler;
 
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
@@ -25,7 +26,7 @@ import javax.lang.model.type.TypeMirror;
 
 public class ServerBinderGenerator
 {
-    public static TypeSpec generateBinder(TypeElement binderServerTypeElement, List<ExecutableElement> methodElements)
+    public static TypeSpec generate(TypeElement binderServerTypeElement, List<ExecutableElement> methodElements)
     {
         String generatedClassName = binderServerTypeElement.getSimpleName().toString() + "Binder";
         TypeMirror binderServerTypeMirror = binderServerTypeElement.asType();
@@ -35,11 +36,9 @@ public class ServerBinderGenerator
                                                      .initializer("$T.FIRST_CALL_TRANSACTION + $L", TypeNameHelper.typeNameOfIBinder(), 1)
                                                      .build();
         //生成构造函数
-        ParameterSpec parameterSpecInterfaceImpl = ParameterSpec.builder(TypeName.get(binderServerTypeMirror), "interfaceImpl").build();
         MethodSpec methodSpecConstructor = MethodSpec.constructorBuilder()
                                                    .addModifiers(Modifier.PUBLIC)
-                                                   .addParameter(parameterSpecInterfaceImpl)
-                                                   .addStatement("$N = $N", fieldSpecInterfaceImpl, parameterSpecInterfaceImpl)
+                                                   .addStatement("$N = new $T()", fieldSpecInterfaceImpl, TypeName.get(binderServerTypeMirror))
                                                    .build();
         //生成Binder类
         TypeSpec.Builder typeImplBuilder = TypeSpec.classBuilder(generatedClassName)

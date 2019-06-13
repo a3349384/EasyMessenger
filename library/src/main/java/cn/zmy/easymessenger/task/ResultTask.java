@@ -21,12 +21,6 @@ public class ResultTask<T> implements Runnable
     @Override
     public void run()
     {
-        if (!mClientHelper.__isServiceBind())
-        {
-            mClientHelper.__runAfterConnected(this);
-            mClientHelper.__startBindService();
-            return;
-        }
         ThreadPoolManager.instance.submit(new Runnable()
         {
             @Override
@@ -35,6 +29,7 @@ public class ResultTask<T> implements Runnable
                 T result;
                 try
                 {
+                    mClientHelper.__startBindServer();
                     result = (T) mCallable.call();
                 }
                 catch (Exception ex)

@@ -21,12 +21,6 @@ public class FloatTask implements Runnable
     @Override
     public void run()
     {
-        if (!mClientHelper.__isServiceBind())
-        {
-            mClientHelper.__runAfterConnected(this);
-            mClientHelper.__startBindService();
-            return;
-        }
         ThreadPoolManager.instance.submit(new Runnable()
         {
             @Override
@@ -35,6 +29,7 @@ public class FloatTask implements Runnable
                 float result;
                 try
                 {
+                    mClientHelper.__startBindServer();
                     result = (float) mCallable.call();
                 }
                 catch (Exception ex)

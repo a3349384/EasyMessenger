@@ -1,16 +1,9 @@
 package cn.zmy.easymessenger;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.IBinder;
-import android.os.RemoteException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Client Helper基类
@@ -18,53 +11,43 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class BaseClientHelper<T>
 {
     private Context mAppContext;
-    private ComponentName mServiceComponentName;
-    private Queue<Runnable> mWaitTasks;
+    private volatile IBinder mIBinder;
     protected T mClient;
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mClient = getClientWithBinder(service);
-            while (!mWaitTasks.isEmpty()) {
-                mWaitTasks.poll().run();
+
+    public void __init(Context context) {
+        mAppContext = context.getApplicationContext();
+    }
+
+    public void __startBindServer() {
+        if (__isBinderAlive()) {
+            return;
+        }
+        synchronized (this) {
+            if (__isBinderAlive()) {
+                return;
+            }
+            Cursor cursor = null;
+            Uri uri = Uri.parse(String.format("content://%s/", __getBinderKey()));
+            cursor = mAppContext.getContentResolver().query(uri, null,null,
+                    null, null);
+            if (cursor == null) {
+                throw new BinderException("Query server ContentProvider failed.");
+            } else {
+                mIBinder = cursor.getExtras().getBinder("binder");
+                cursor.close();
+                if (mIBinder == null) {
+                    throw new BinderException("Get server binder failed.");
+                }
+                mClient = __getClientWithBinder(mIBinder);
             }
         }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mClient = null;
-            __startBindService();
-        }
-    };
-
-    public void __init(Context context, ComponentName serviceComponentName) {
-        mAppContext = context.getApplicationContext();
-        mServiceComponentName = serviceComponentName;
-        mWaitTasks = new ConcurrentLinkedQueue<>();
     }
 
-    public void __destroy() {
-        mAppContext.unbindService(mServiceConnection);
-        mAppContext = null;
-        mClient = null;
-        mWaitTasks.clear();
-        mWaitTasks = null;
+    public boolean __isBinderAlive() {
+        return mIBinder != null && mIBinder.isBinderAlive();
     }
 
-    public void __startBindService() {
-        Intent intent = new Intent();
-        intent.setComponent(mServiceComponentName);
-        mAppContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
-    }
+    protected abstract T __getClientWithBinder(IBinder binder);
 
-    public boolean __isServiceBind() {
-        return mClient != null;
-    }
-
-    public void __runAfterConnected(Runnable runnable)
-    {
-        mWaitTasks.add(runnable);
-    }
-
-    protected abstract T getClientWithBinder(IBinder binder);
+    protected abstract String __getBinderKey();
 }

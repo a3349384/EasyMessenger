@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.doubleArrayTest).setOnClickListener(this);
         findViewById(R.id.parcelableArrayTest).setOnClickListener(this);
 
-        ITestFunctionHelper.instance.__init(this, getServiceComponentName());
+        ITestFunctionHelper.instance.__init(this);
         IBroadcastMessageHelper.instance.__init(this);
         BroadcastReceiverHelper.instance.__init(this.getApplicationContext());
     }

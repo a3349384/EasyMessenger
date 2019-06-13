@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by zmy on 2018/4/7.
  */
-@BinderClient
+@BinderClient(key = "test")
 public interface ITestFunction
 {
     void voidTest();

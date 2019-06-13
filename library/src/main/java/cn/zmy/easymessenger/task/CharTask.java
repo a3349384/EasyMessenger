@@ -21,12 +21,6 @@ public class CharTask implements Runnable
     @Override
     public void run()
     {
-        if (!mClientHelper.__isServiceBind())
-        {
-            mClientHelper.__runAfterConnected(this);
-            mClientHelper.__startBindService();
-            return;
-        }
         ThreadPoolManager.instance.submit(new Runnable()
         {
             @Override
@@ -35,6 +29,7 @@ public class CharTask implements Runnable
                 char result;
                 try
                 {
+                    mClientHelper.__startBindServer();
                     result = (char) mCallable.call();
                 }
                 catch (Exception ex)

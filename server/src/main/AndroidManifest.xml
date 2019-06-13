@@ -4,8 +4,13 @@
     <application
         android:allowBackup="false"
         android:label="@string/app_name"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:name=".TheApplication">
         <service android:name=".ServerService"
                  android:exported="true"/>
+        <provider
+            android:authorities="test"
+            android:name="cn.zmy.easymessenger.server.TestFunctionImplProvider"
+            android:exported="true"/>
     </application>
 </manifest>

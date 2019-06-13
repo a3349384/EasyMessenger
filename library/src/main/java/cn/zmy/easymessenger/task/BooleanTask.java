@@ -21,12 +21,6 @@ public class BooleanTask implements Runnable
     @Override
     public void run()
     {
-        if (!mClientHelper.__isServiceBind())
-        {
-            mClientHelper.__runAfterConnected(this);
-            mClientHelper.__startBindService();
-            return;
-        }
         ThreadPoolManager.instance.submit(new Runnable()
         {
             @Override
@@ -35,6 +29,7 @@ public class BooleanTask implements Runnable
                 boolean result;
                 try
                 {
+                    mClientHelper.__startBindServer();
                     result = (boolean) mCallable.call();
                 }
                 catch (Exception ex)
