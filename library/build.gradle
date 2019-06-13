@@ -13,7 +13,7 @@ publish {
     userOrg = 'a3349384'
     groupId = 'cn.zmy'
     artifactId = 'easymessenger-lib'
-    publishVersion = '0.1'
-    desc = 'An android IPC library'
+    publishVersion = '0.2'
+    desc = 'An android IPC library base on Binder'
     website = 'https://github.com/a3349384/EasyMessenger'
 }
