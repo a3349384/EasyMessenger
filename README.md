@@ -17,20 +17,54 @@ EasyMessenger
 - ArrayList
 - enum(需要实现parcelable)
 
-### 下载
+## 下载
 --------
+
+Client和Server工程均需引用下面的依赖.
 
 ```gradle
-implementation 'cn.zmy:easymessenger-lib:0.1'
-annotationProcessor 'cn.zmy:easymessenger-compiler:0.1'
+implementation 'cn.zmy:easymessenger-lib:0.3'
+annotationProcessor 'cn.zmy:easymessenger-compiler:0.3'
 ```
 
-### 开始使用
+## 开始使用
 --------
 
-#### Client使用
+### Server端
 
-Client声明接口，例如：
+Server实现需要提供给Client功能，例如:
+
+```java
+@BinderServer
+public class FunctionImpl
+{
+    //必须是pubic
+    //方法名称、参数数量、类型、顺序必须和client的接口一致
+    public int add(int num1, int num2)
+    {
+        return num1 + num2;
+    }
+}
+```
+
+注意，实现类上面标注了`@BinderServer`注解，表示这个类是一个Server的实现。
+
+build项目之后会生成`FunctionImplProvider`类,这是一个`ContentProvider`，其命名规则为：Server实现类的名称 + Provider。
+
+接下来，需要将生成的`ContentProvider`在`AndroidManifest.xml`中予以声明：
+
+```xml
+<provider
+    android:authorities="your-authorities"
+    android:name="xx.xx.FunctionImplProvider"
+    android:exported="true"/>
+```
+
+请记住`android:authorities`的值，它是Client和Server之间进行通信的钥匙。
+
+### Client端
+
+Client只需要照着Server的实现，声明同样签名的接口方法即可：
 
 ```java
 @BinderClient
@@ -40,17 +74,18 @@ public interface ClientInterface
 }
 ```
 
-build之后，会生成`ClientInterfaceHelper`类，开发者也正是通过这个Helper类进行IPC通信。Helper类的命名规则为：Client接口的名称 + Helper。接下来看一下Client如何使用Helper发起IPC请求。
+其上面标注了`@BinderClient`注解，表示类是一个Client接口。
+
+build项目之后，会生成`ClientInterfaceHelper`类，开发者也正是通过这个生成Helper类来和Server进行IPC通信的。Helper类的命名规则为：Client接口的名称 + Helper。接下来看一下Client如何使用Helper发起IPC请求。
 
 ```java
-//使用之前需要初始化
-ClientInterfaceHelper.instance.__init(context, 
-    new ComponentName("{server_package}", "{server_service_name}"));
+//使用之前需要初始化,需要传递application类型的context
+ClientInterfaceHelper.instance.__init(appContext);
     
-//Client以同步的方式发起IPC调用
+//同步IPC示例。在IPC完成之前，线程会阻塞
 int result = ClientInterfaceHelper.instance.add(1, 2);
     
-//Client以异步的方式IPC调用
+//异步IPC示例。线程不会阻塞
 ClientInterfaceHelper.instance.addAsync(1, 2, new IntCallback()
 {
     @Override
@@ -66,38 +101,6 @@ ClientInterfaceHelper.instance.addAsync(1, 2, new IntCallback()
     }
 });
 ```
-
-#### Server使用
-
-Server需要实现按照Client定义的接口进行实现，例如:
-
-```java
-@BinderServer
-public class FunctionImpl
-{
-    //必须是pubic
-    //方法名称、参数数量、类型、顺序必须和client的接口一致
-    public int add(int num1, int num2)
-    {
-        
-    }
-}
-```
-
-build之后会生成`FunctionImplBinder`类,这个类是一个Binder，具体命名规则为：Server的实现类的名称 + Binder。将这个Binder和Service绑定：
-
-```java
-public class ServerService extends Service
-{
-    @Override
-    public IBinder onBind(Intent intent)
-    {
-        return new FunctionImplBinder(new FunctionImpl());
-    }
-}
-```
-
-接着在AndroidManifest.xml对这个Service进行注册即可。由于涉及到进程间通信，需要将Service的export属性设为true。
 
 ### License
 -------
