@@ -60,7 +60,6 @@ public class ClientClientGenerator
                                                .build();
         //开始生成Client类
         TypeSpec.Builder typeImplBuilder = TypeSpec.classBuilder(generatedClassName)
-                                                   .addModifiers(Modifier.PUBLIC)
                                                    .addField(fieldSpecRemote)
                                                    .addField(fieldSpecTransactionCode)
                                                    .addMethod(methodSpecConstructor)
