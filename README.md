@@ -69,14 +69,14 @@ build项目之后会生成`FunctionImplProvider`类,这是一个`ContentProvider
 Client只需要照着Server的实现，声明同样签名的接口方法即可：
 
 ```java
-@BinderClient
+@BinderClient(key = "your-authorities")
 public interface ClientInterface
 {
     int add(int num1, int num2);
 }
 ```
 
-其上面标注了`@BinderClient`注解，表示类是一个Client接口。
+其上面标注了`@BinderClient`注解，表示类是一个Client接口。需要注意的是，`@BinderClient`注解需要设置其`key`参数的值, 其值即为Server项目中`ContentProvider`的`android:authorities`的值。
 
 build项目之后，会生成`ClientInterfaceHelper`类，开发者也正是通过这个生成Helper类来和Server进行IPC通信的。Helper类的命名规则为：Client接口的名称 + Helper。接下来看一下Client如何使用Helper发起IPC请求。
 
