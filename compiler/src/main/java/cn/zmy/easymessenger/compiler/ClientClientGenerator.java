@@ -6,7 +6,6 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import cn.zmy.easymessenger.BinderClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +18,8 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+
+import cn.zmy.easymessenger.BinderClient;
 
 /**
  * Created by zmy on 2019/2/19.
@@ -85,7 +86,6 @@ public class ClientClientGenerator
             interfaceMethodBuilder.addStatement("$1T reply = $1T.obtain()", TypeNameHelper.typeNameOfParcel());
             interfaceMethodBuilder.addStatement("data.writeString($S)", methodElement.toString());
             interfaceMethodBuilder.beginControlFlow("try");
-            boolean isNullFlagDefined = false;
             for (VariableElement parameterElement : methodElement.getParameters())
             {
 //                Global.messager.printMessage(Diagnostic.Kind.NOTE, "parameter type:" + parameterElement.asType().toString());
