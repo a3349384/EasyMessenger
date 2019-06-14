@@ -14,7 +14,7 @@ EasyMessenger
 - String, String[]
 - Parcelable, Parcelable[]
 - Serializable
-- ArrayList
+- ArrayList(泛型参数只能是简单类型或者Parcelable)
 - enum(需要实现parcelable)
 
 ## 下载
@@ -31,6 +31,7 @@ annotationProcessor 'cn.zmy:easymessenger-compiler:0.3'
 --------
 
 ### Server端
+--------
 
 Server实现需要提供给Client功能，例如:
 
@@ -63,6 +64,7 @@ build项目之后会生成`FunctionImplProvider`类,这是一个`ContentProvider
 请记住`android:authorities`的值，它是Client和Server之间进行通信的钥匙。
 
 ### Client端
+--------
 
 Client只需要照着Server的实现，声明同样签名的接口方法即可：
 
@@ -102,7 +104,23 @@ ClientInterfaceHelper.instance.addAsync(1, 2, new IntCallback()
 });
 ```
 
-### License
+## 限制
+
+1. `EasyMessenger`目前只支持下面的数据类型：
+
+- boolean, byte, char, short, int, long, float, double
+- boolean[], byte[], char[], int[], long[], float[], double[]
+- String, String[]
+- Parcelable, Parcelable[]
+- Serializable
+- ArrayList(泛型参数只能是简单类型或者Parcelable)
+- enum(需要实现parcelable)
+
+2. `ContentProvider`的限制
+
+由于`EasyMessenger`使用`ContentProvider`来获取Server的Binder的代理，而`ContentProvider`会先于`Application#onCreate`初始化，所以对于一些初始化代码可能需要放置于`Application#attachBaseContext`中。
+
+## License
 -------
 
     Licensed under the Apache License, Version 2.0 (the "License");
