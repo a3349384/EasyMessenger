@@ -9,6 +9,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <Button android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="all test"
+            android:textAllCaps="false"
+            android:id="@+id/viewAllTest"/>
+        <Button android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="void test"
                 android:textAllCaps="false"
