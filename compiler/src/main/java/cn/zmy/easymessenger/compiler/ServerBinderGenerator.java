@@ -1,6 +1,5 @@
 package cn.zmy.easymessenger.compiler;
 
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
@@ -42,7 +41,6 @@ public class ServerBinderGenerator
                                                    .build();
         //生成Binder类
         TypeSpec.Builder typeImplBuilder = TypeSpec.classBuilder(generatedClassName)
-                                                   .addModifiers(Modifier.PUBLIC)
                                                    .superclass(TypeNameHelper.typeNameOfBinder())
                                                    .addField(fieldSpecInterfaceImpl)
                                                    .addField(fieldSpecTransactionCode)
