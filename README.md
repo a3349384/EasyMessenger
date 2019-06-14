@@ -105,16 +105,17 @@ ClientInterfaceHelper.instance.addAsync(1, 2, new IntCallback()
 ```
 
 ## 限制
-1. API Level >= 18
+
+### API Level >= 18
 
 API Level < 18的项目可以使用:
 
 ```gradle
-implementation 'cn.zmy:easymessenger-lib:0.3'
-annotationProcessor 'cn.zmy:easymessenger-compiler:0.3'
+implementation 'cn.zmy:easymessenger-lib:0.2'
+annotationProcessor 'cn.zmy:easymessenger-compiler:0.2'
 ```
 
-2. `EasyMessenger`目前只支持下面的数据类型：
+### `EasyMessenger`目前只支持下面的数据类型：
 
 - boolean, byte, char, short, int, long, float, double
 - boolean[], byte[], char[], int[], long[], float[], double[]
@@ -124,7 +125,7 @@ annotationProcessor 'cn.zmy:easymessenger-compiler:0.3'
 - ArrayList(泛型参数只能是简单类型或者Parcelable)
 - enum(需要实现parcelable)
 
-1. `ContentProvider`的限制
+### `ContentProvider`的限制
 
 由于`EasyMessenger`使用`ContentProvider`来获取Server的Binder的代理，而`ContentProvider`会先于`Application#onCreate`初始化，所以对于一些初始化代码可能需要放置于`Application#attachBaseContext`中。
 
