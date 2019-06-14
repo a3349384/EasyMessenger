@@ -20,15 +20,15 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.squareup:javapoet:1.10.0'
-//    implementation 'cn.zmy:easymessenger-lib:0.2'
-    implementation project(':library')
+    implementation 'cn.zmy:easymessenger-lib:0.3'
+//    implementation project(':library')
 }
 
 publish {
     userOrg = 'a3349384'
     groupId = 'cn.zmy'
     artifactId = 'easymessenger-compiler'
-    publishVersion = '0.2'
+    publishVersion = '0.3'
     desc = 'An android IPC library base on Binder'
     website = 'https://github.com/a3349384/EasyMessenger'
 }
